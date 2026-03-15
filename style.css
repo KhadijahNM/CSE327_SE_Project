@@ -1,0 +1,165 @@
+/* ================= BACKGROUND ================= */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #e3f2fd;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ================= MAIN CARD ================= */
+.login-card {
+  display: flex;
+  width: 800px;
+  max-width: 95%;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* ================= LEFT PANEL ================= */
+.left-panel {
+  width: 50%;
+  background: #f1f8ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  padding: 40px;
+  text-align: center;
+}
+
+.logo {
+  width: 120px;
+}
+
+/* ================= RIGHT PANEL ================= */
+.right-panel {
+  width: 50%;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* ================= TITLE ================= */
+.right-panel h3 {
+  color: #2196F3;   /* Blue text */
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* ================= TABS ================= */
+.role-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.role-buttons button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #2196F3;
+  background: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.role-buttons button:hover {
+  background: #e3f2fd;
+}
+
+.role-buttons .active {
+  background: #2196F3;
+  color: white;
+}
+
+/* ================= FORM LABEL ================= */
+label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* ================= INPUTS ================= */
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 15px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #2196F3;
+}
+
+/* ================= MAIN BUTTON ================= */
+.main-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2196F3;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.main-btn:hover {
+  background: #1976D2;
+}
+
+/* ================= CONTINUE TEXT ================= */
+.continue-text {
+  margin-top: 25px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+  color: #2196F3;
+}
+
+/* ================= SOCIAL ROW ================= */
+.social-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* ================= SOCIAL BUTTON ================= */
+.social-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #2196F3;
+  background: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.social-box img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.social-box:hover {
+  background: #e3f2fd;
+}
+
+
+

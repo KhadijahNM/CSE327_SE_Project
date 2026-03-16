@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OptiGuard • Donation</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>OptiGuard</span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="diagnostics.html">Diagnostics</a>
+      <a class="active" href="donation.html">Donation</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Donation</h1>
+    <p class="muted">This is a demo donation page. For your course, you can store donation history in DB (and later add real payment gateway).</p>
+
+    <section class="card">
+      <h3>Support OptiGuard AI</h3>
+
+      <label class="label">Enter amount (BDT)</label>
+      <input id="amount" class="input" type="number" value="500" min="1" />
+
+      <div class="row gap">
+        <button class="btn" data-quick="50">৳50</button>
+        <button class="btn" data-quick="250">৳250</button>
+        <button class="btn primary" data-quick="500">৳500</button>
+        <button class="btn" data-quick="1000">৳1000</button>
+      </div>
+
+      <button id="donateBtn" class="btn primary big">Donate Now</button>
+
+      <p id="donateMsg" class="muted" style="margin-top:10px;"></p>
+    </section>
+
+    <section class="card">
+      <h3>Donation Notes</h3>
+      <ul class="muted" style="margin:0; padding-left:18px;">
+        <li>This demo stores donations via a backend API endpoint.</li>
+        <li>Later you can connect a gateway (SSLCommerz / Stripe / etc.) if required.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="muted">OptiGuard • Donation</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/donation.js"></script>
+</body>
+</html>

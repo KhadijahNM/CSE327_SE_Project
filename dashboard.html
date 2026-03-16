@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>OptiGuard AI - Test History</title>
+<link rel="stylesheet" href="dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+  <!-- ================= TITLE BAR ================= -->
+  <div class="title-bar">
+    <button class="icon-btn" onclick="goBack()">←</button>
+    <h2 class="title-text">Test History</h2>
+    <button class="menu-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6 3h2v18H6V3zm5 6h2v12h-2V9zm5 4h2v8h-2v-8z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ================= SUBTITLE ================= -->
+  <div class="subtitle-bar">
+    <h3 class="subtitle">Risk Overview</h3>
+  </div>
+
+  <!-- ================= CHART ================= -->
+  <div class="chart-box">
+    <h4 class="chart-title">Monthly Trend</h4>
+    <p class="chart-subtitle">Risk Level progression over time</p>
+    <canvas id="riskChart" height="100"></canvas>
+  </div>
+
+  <!-- ================= STATS ================= -->
+  <div class="stats">
+    <div class="stat-box">
+      <h3 id="avgRisk">0%</h3>
+      <p>Avg. Risk</p>
+    </div>
+    <div class="stat-box">
+      <h3 id="totalScans">0</h3>
+      <p>Total Scans</p>
+    </div>
+    <div class="stat-box trend-box">
+      <h3 id="trendText">Loading...</h3>
+      <p>Trend</p>
+    </div>
+  </div>
+
+  <!-- ================= REPORTS ================= -->
+  <div class="reports">
+    <div class="reports-header">
+      <h3 class="reports-title">Recent Reports</h3>
+      <a href="#" id="viewAllBtn" class="view-all">View All</a>
+    </div>
+    <!-- Dynamic reports go here -->
+    <div id="reportsContainer"></div>
+  </div>
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+/* Back button */
+function goBack(){
+  window.history.back();
+}
+
+let allReports = [];
+
+/* Fetch data from backend */
+fetch("http://localhost:5001/reports")
+.then(res => res.json())
+.then(data => {
+  allReports = data;
+  updateStats(data);
+  createChart(data);
+
+  // Show only 2 or 3 initially (instead of all)
+  showReports(data.slice(0,3));
+});
+
+/* ================= UPDATE STATS ================= */
+function updateStats(data){
+  const totalScans = data.length;
+  const totalRisk = data.reduce((sum,r)=>sum+r.risk,0);
+  const avgRisk = totalScans>0
+    ? (totalRisk/totalScans).toFixed(1)
+    : 0;
+
+  document.getElementById("avgRisk").innerText = avgRisk + "%";
+  document.getElementById("totalScans").innerText = totalScans;
+
+  let trend = "No Data";
+  if(data.length>=2){
+    const last = data[data.length-1].risk;
+    const prev = data[data.length-2].risk;
+    if(last>prev) trend="↑ Increasing";
+    else if(last<prev) trend="↓ Decreasing";
+    else trend="→ Stable";
+  }
+  document.getElementById("trendText").innerText = trend;
+}
+
+/* ================= CREATE CHART ================= */
+function createChart(data){
+  const labels = data.map(r=>r.date);
+  const risks = data.map(r=>r.risk);
+
+  new Chart(document.getElementById("riskChart"),{
+    type:"bar",
+    data:{
+      labels:labels,
+      datasets:[{
+        data:risks,
+        backgroundColor:"#2196F3"
+      }]
+    },
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
+  });
+}
+
+/* ================= SHOW REPORTS ================= */
+function showReports(reports){
+  const container = document.getElementById("reportsContainer");
+  container.innerHTML = "";
+
+  reports.forEach(report=>{
+    let statusClass="status-low";
+    if(report.status.toLowerCase()==="medium") statusClass="status-medium";
+    if(report.status.toLowerCase()==="high") statusClass="status-high";
+
+    const card=document.createElement("div");
+    card.className="report-item";
+
+    card.innerHTML=`
+      <div class="report-left">
+        <span class="report-date">
+          ${new Date(report.date).toLocaleDateString('en-US',{
+            year:'numeric',month:'short',day:'numeric'
+          })}
+        </span>
+        <span class="report-time">${report.time}</span>
+        <div class="report-status">
+          <span class="status-dot ${statusClass}"></span>
+          <span>${report.status}</span>
+        </div>
+      </div>
+      <div class="report-right">
+        <div class="risk-value">${report.risk}%</div>
+        <div class="risk-label">Risk</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ================= VIEW ALL BUTTON ================= */
+document.getElementById("viewAllBtn")
+.addEventListener("click",function(e){
+  e.preventDefault();
+
+  //  Show all reports when clicked
+  showReports(allReports);
+
+  // Hide button after expanding
+  this.style.display="none";
+});
+</script>
+
+</body>
+</html>

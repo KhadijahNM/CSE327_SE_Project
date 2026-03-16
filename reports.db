@@ -1,0 +1,23 @@
+-- =========================
+-- Create the reports table
+-- =========================
+CREATE TABLE reports (
+  id INT AUTO_INCREMENT PRIMARY KEY,   -- Unique ID for each report, auto-incremented
+  date VARCHAR(50),                    -- Stores the date of the report (e.g., '2026-03-10')
+  time VARCHAR(50),                    -- Stores the time of the report (e.g., '10:15:00')
+  risk INT,                            -- Numeric risk percentage (e.g., 20, 35, 55)
+  status VARCHAR(50),                  -- Text status level (Low, Medium, High)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Automatically records when the row was created
+);
+
+-- =========================
+-- Insert sample data
+-- =========================
+INSERT INTO reports (date, time, risk, status)
+VALUES 
+  ('2026-03-10', '10:15:00', 20, 'Low'),     -- Report 1: Low risk, 20%
+  ('2026-03-11', '11:30:00', 35, 'Medium'),  -- Report 2: Medium risk, 35%
+  ('2026-03-12', '14:45:00', 55, 'High'),    -- Report 3: High risk, 55%
+  ('2026-03-13', '09:20:00', 40, 'Medium'),  -- Report 4: Medium risk, 40%
+  ('2026-03-14', '16:10:00', 15, 'Low'),     -- Report 5: Low risk, 15%
+  ('2026-03-15', '18:05:00', 60, 'High');    -- Report 6: High risk, 60%

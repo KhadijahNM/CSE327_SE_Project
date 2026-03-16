@@ -1,0 +1,254 @@
+/* =========================
+   PAGE BACKGROUND
+   ========================= */
+body{
+  font-family: Arial, sans-serif;
+  background:#f5f7fb;
+}
+
+/* =========================
+   MAIN DASHBOARD CONTAINER
+   ========================= */
+.dashboard {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* =========================
+   TITLE BAR
+   ========================= */
+.title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.title-text {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+}
+
+/* Buttons for back and menu */
+.icon-btn, .menu-btn {
+  background: none;
+  border: none;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* =========================
+   SUBTITLE BAR
+   ========================= */
+.subtitle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px 0;
+}
+
+.subtitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+}
+
+/* Filter section */
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2196F3;
+}
+
+.filter-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #2196F3;
+}
+
+/* =========================
+   CHART BOX
+   ========================= */
+.chart-box {
+  background: #B0E0E6;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #002171;
+}
+
+.chart-subtitle {
+  margin: 5px 0 15px;
+  font-size: 14px;
+  color: #002171;
+}
+
+/* =========================
+   STATISTICS CARDS
+   ========================= */
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* Individual stat card */
+.stat-box {
+  flex: 1;
+  background: #B0E0E6;
+  margin: 0 10px;
+  padding: 15px;
+  border-radius: 8px;
+  color: black;
+
+  /* ✅ Center content horizontally & vertically */
+  display: flex;              
+  flex-direction: column;     
+  align-items: center;        
+  justify-content: center;    
+  text-align: center;         
+}
+
+/* Numbers inside cards */
+.stat-box h3 {
+  margin: 0;
+  color: #0D47A1;
+}
+
+/* Icon container */
+.stat-icon {
+  margin-bottom: 8px;
+}
+
+/* Center icon */
+.stat-icon svg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* =========================
+   TREND CARD ADJUSTMENT
+   ========================= */
+.trend-box h3{
+  margin-top:0;   /* ✅ Removed extra spacing so it aligns like Avg Risk & Total Scans */
+}
+
+/* =========================
+   REPORT HEADER
+   ========================= */
+.reports-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.reports-title{
+  font-size:22px;
+  font-weight:bold;
+  color:black;
+}
+
+.view-all{
+  font-size:14px;
+  color:#2196F3;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+/* =========================
+   REPORT CARD
+   ========================= */
+.report-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  background:white;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+
+  padding:15px;
+  margin-bottom:12px;
+}
+
+/* Left section */
+.report-left{
+  display:flex;
+  flex-direction:column;
+}
+
+.report-date{
+  font-size:15px;
+  font-weight:bold;
+  color:black;
+}
+
+.report-time{
+  font-size:13px;
+  color:#666;
+  margin-bottom:6px;
+}
+
+/* Status line */
+.report-status{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:14px;
+}
+
+/* =========================
+   STATUS DOT COLORS
+   ========================= */
+/* ✅ Changed this portion so colors depend on Low/Medium/High */
+.status-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  display:inline-block;
+}
+
+.status-low {
+  background:#4CAF50;   /* Green for Low */
+}
+
+.status-medium {
+  background:#FFC107;   /* Amber/Yellow for Medium */
+}
+
+.status-high {
+  background:#F44336;   /* Red for High */
+}
+
+/* Right section */
+.report-right{
+  text-align:right;
+}
+
+.risk-value{
+  font-size:20px;
+  font-weight:bold;
+  color:#0D47A1;
+}
+
+.risk-label{
+  font-size:13px;
+  color:#666;
+}

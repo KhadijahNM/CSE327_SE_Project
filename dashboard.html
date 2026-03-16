@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OptiGuard • Dashboard</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>OptiGuard</span>
+    </div>
+    <nav class="nav">
+      <a class="active" href="dashboard.html">Dashboard</a>
+      <a href="diagnostics.html">Diagnostics</a>
+      <a href="donation.html">Donation</a>
+    </nav>
+    <div class="topbar-actions">
+      <button id="logoutBtn" class="btn ghost" title="Demo logout">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 id="hello">Hello!</h1>
+    <p class="muted">This is your personal eye-health overview (demo data for now).</p>
+
+    <section class="card hero">
+      <div class="hero-left">
+        <h2>Instant Eye Wellness Scan</h2>
+        <p>Upload a fundus image for DR/Glaucoma screening and get a risk score.</p>
+        <div class="row gap">
+          <a class="btn primary" href="diagnostics.html">Scan My Eyes</a>
+          <a class="btn" href="donation.html">Support the Project</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="pill">AI Engine Ready</div>
+        <div class="pill">Focus: Optimal</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">
+        <div class="card-title">
+          <h3>Latest Risk Level</h3>
+          <span class="badge" id="latestBadge">—</span>
+        </div>
+        <p id="riskText" class="big">Loading…</p>
+        <p class="muted" id="riskNote">—</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h3>Today's Screen Usage</h3>
+          <span class="badge" id="usageBadge">—</span>
+        </div>
+        <p id="usageText" class="big">Loading…</p>
+        <p class="muted">Tip: follow the <b>20-20-20</b> rule to reduce eye strain.</p>
+        <button id="takeBreakBtn" class="btn">Send a 20-20-20 reminder</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <h3>Recent Reports</h3>
+        <span class="muted">Last 30 days</span>
+      </div>
+      <div class="table" id="reports">
+        <div class="row header">
+          <div>Date</div>
+          <div>Test</div>
+          <div>Risk</div>
+        </div>
+        <!-- rows injected -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="muted">OptiGuard • Demo build for your course project</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+</body>
+</html>

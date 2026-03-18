@@ -1,0 +1,11 @@
+-- Create a table called screenhealth to store brightness, blue light, and preset values
+CREATE TABLE screenhealth (
+  id INT PRIMARY KEY AUTO_INCREMENT,  -- unique ID for each row, auto-incremented
+  brightness INT NOT NULL,            -- brightness percentage (0–100)
+  blueLight INT NOT NULL,             -- blue light filter percentage (0–100)
+  preset VARCHAR(50) NOT NULL         -- preset name (e.g., 'Standard', 'Reading', 'Night')
+);
+
+-- Insert an initial default row into the screenhealth table
+INSERT INTO screenhealth (brightness, blueLight, preset)
+VALUES (65, 40, 'Standard');

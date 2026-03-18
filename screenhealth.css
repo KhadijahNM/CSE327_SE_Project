@@ -1,0 +1,258 @@
+/* General page styling */
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5; /* softer website background */
+  color: #333;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;           /* full viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main container */
+.screenhealth-container {
+  flex: 1;                     /* take full height */
+  width: 100%;                 /* full width */
+  max-width: 1200px;           /* readable width */
+  margin: 0 auto;              /* center horizontally */
+  background: #fff;
+  border-radius: 0;            /* remove rounded corners for website feel */
+  box-shadow: none;            /* remove app-style shadow */
+  padding: 40px;               /* spacious padding */
+}
+
+/* Top bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+.title {
+  flex: 1;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+.icon-left, .icon-right {
+  width: 40px;
+  text-align: center;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Circle indicator */
+.circle-indicator {
+  text-align: center;
+  margin: 60px auto;
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+.progress-ring {
+  transform: rotate(-90deg);
+}
+.progress-ring__background {
+  stroke-linecap: round;
+}
+.progress-ring__progress {
+  stroke-linecap: round;
+  stroke-dasharray: 565;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.3s ease;
+}
+.circle-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.percent {
+  font-size: 56px;
+  font-weight: bold;
+  color: #000;
+}
+.label {
+  font-size: 22px;
+  color: #000;
+}
+.optimal-text {
+  margin-top: 30px;            /* sits under the circle */
+  display: inline-block;
+  white-space: nowrap;         /* keep text in one line */
+  padding: 12px 22px;
+  background-color: #e6f0fa;
+  color: #000;
+  border-radius: 20px;
+  font-size: 20px;             /* bigger font for optimal box */
+  text-align: center;
+  margin-bottom: 80px;         /* extra gap before recommendation box */
+  margin-left: -40px;          /* shift slightly to the left */
+}
+
+.shield-icon {
+  margin-right: 6px;
+  font-size: 16px;
+  vertical-align: middle;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+.tick-mark {
+  font-size: 12px;
+  margin-top: -2px;
+}
+
+/* Recommendation box */
+.recommendation-box {
+  background: #f9fbff;
+  padding: 25px;
+  border-radius: 8px;
+  margin-top: 100px;          
+  margin-bottom: 40px;
+}
+
+.recommendation-content {
+  display: flex;
+  align-items: flex-start;
+}
+.recommendation-icon {
+  font-size: 28px;
+  margin-right: 12px;
+  color: #0073e6;
+}
+.recommendation-text-block {
+  flex: 1;
+}
+.recommendation-title {
+  color: #0073e6;
+  margin: 0 0 10px 0;
+  font-size: 24px;             /* bigger title */
+}
+.recommendation-text {
+  color: #5a7fa8;
+  font-size: 20px;             /* bigger recommendation text */
+}
+.highlight {
+  font-weight: bold;
+  color: #0073e6;
+  font-size: 22px;             /* bigger highlight text */
+}
+
+
+
+
+/* Buttons inside recommendation box */
+.recommendation-actions {
+  display: flex;
+  margin-top: 20px;
+}
+.apply-btn {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+.dismiss-btn {
+  background: #f0f8ff;
+  color: #4a90e2;
+  font-weight: bold;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-left: auto; 
+}
+
+/* Sliders */
+.sliders {
+  margin: 40px 0;
+}
+.slider-row {
+  margin-bottom: 30px;
+}
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.slider-label {
+  font-weight: bold;
+  color: #000;
+  font-size: 22px; 
+}
+.slider-value {
+  font-weight: bold;
+  color: #000;
+  font-size: 22px; 
+}
+input[type="range"] {
+  width: 100%;
+  margin-top: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+}
+
+/* Chrome, Safari, Edge thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4a90e2;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+/* Firefox track fill */
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+}
+input[type="range"]::-moz-range-progress {
+  background-color: #4a90e2;
+  height: 6px;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4a90e2;
+  cursor: pointer;
+}
+
+/* IE/Edge legacy */
+input[type="range"]::-ms-track {
+  height: 6px;
+  border-radius: 3px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type="range"]::-ms-fill-lower {
+  background: #4a90e2;
+}
+input[type="range"]::-ms-fill-upper {
+  background: #e0e0e0;
+}
+input[type="range"]::-ms-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4a90e2;
+  cursor: pointer;
+}
+

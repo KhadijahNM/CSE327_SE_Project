@@ -33,19 +33,19 @@
           <button type="button" onclick="showLogin()">Login</button>
         </div>
 
-        <!-- Full Name (Signup Only) -->
+        <!-- Full Name -->
         <div id="nameField">
           <label>Full Name</label>
-          <input type="text" id="fullname" name="fullname" placeholder="Enter Your Full Name">
+          <input type="text" id="fullname" placeholder="Enter Your Full Name">
         </div>
 
         <!-- Email -->
         <label>Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter Your Email">
+        <input type="email" id="email" placeholder="Enter Your Email">
 
         <!-- Password -->
         <label>Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter Password">
+        <input type="password" id="password" placeholder="Enter Password">
 
         <!-- Main Button -->
         <button type="button" class="main-btn" id="mainActionBtn" onclick="handleAuth()">
@@ -54,57 +54,43 @@
 
       </form>
 
-      <!-- Continue Text -->
-      <div class="continue-text">
-        Continue With
-      </div>
+      <div class="continue-text">Continue With</div>
 
-      <!-- Social Buttons Side by Side -->
       <div class="social-row">
-        <!-- Google -->
-        <button type="button" class="social-box">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
+
+        <!-- GOOGLE -->
+        <button type="button" class="social-box" onclick="loginWithGoogle()">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg">
           Google
         </button>
 
-        <!-- Facebook -->
-        <button type="button" class="social-box">
-          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook Logo">
+        <!-- FACEBOOK -->
+        <button type="button" class="social-box" onclick="loginWithFacebook()">
+          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg">
           Facebook
         </button>
+
       </div>
 
     </div>
   </div>
 
-  <!-- JavaScript -->
+  <!-- NORMAL JS -->
   <script>
-    // Track current mode
     let isSignup = true;
 
-    // Show Signup
     function showSignup() {
       isSignup = true;
       document.getElementById("nameField").style.display = "block";
       document.getElementById("mainActionBtn").innerText = "Create Account";
-
-      // Toggle button styles
-      document.querySelector(".role-buttons button:nth-child(1)").classList.add("active");
-      document.querySelector(".role-buttons button:nth-child(2)").classList.remove("active");
     }
 
-    // Show Login
     function showLogin() {
       isSignup = false;
       document.getElementById("nameField").style.display = "none";
       document.getElementById("mainActionBtn").innerText = "Login";
-
-      // Toggle button styles
-      document.querySelector(".role-buttons button:nth-child(2)").classList.add("active");
-      document.querySelector(".role-buttons button:nth-child(1)").classList.remove("active");
     }
 
-    // Handle Signup / Login
     async function handleAuth() {
       const fullname = document.getElementById("fullname")?.value;
       const email = document.getElementById("email").value;
@@ -130,20 +116,66 @@
 
         const result = await response.json();
 
-        if (result.error) {
-          alert(result.message + "\nDetails: " + result.error);
-        } else {
-          alert(result.message);
-        }
+        alert(result.message);
 
       } catch (error) {
-        console.error("Connection Error:", error);
         alert("❌ Cannot connect to server");
       }
     }
   </script>
 
+  <!-- 🔥 FIREBASE SCRIPT -->
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      FacebookAuthProvider,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // 🔴 REPLACE THIS WITH YOUR CONFIG
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const googleProvider = new GoogleAuthProvider();
+    const facebookProvider = new FacebookAuthProvider();
+
+    // GOOGLE LOGIN
+    window.loginWithGoogle = function () {
+      signInWithPopup(auth, googleProvider)
+        .then((result) => {
+          const user = result.user;
+          alert("✅ Google Login: " + user.email);
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("❌ Google login failed");
+        });
+    };
+
+    // FACEBOOK LOGIN
+    window.loginWithFacebook = function () {
+      signInWithPopup(auth, facebookProvider)
+        .then((result) => {
+          const user = result.user;
+          alert("✅ Facebook Login: " + user.email);
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("❌ Facebook login failed");
+        });
+    };
+
+  </script>
+
 </body>
 </html>
-
-

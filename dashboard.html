@@ -1,180 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<title>OptiGuard AI - Test History</title>
-<link rel="stylesheet" href="dashboard.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OptiGuard • Dashboard</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
-
 <body>
-
-<div class="dashboard">
-
-  <!-- ================= TITLE BAR ================= -->
-  <div class="title-bar">
-    <button class="icon-btn" onclick="goBack()">←</button>
-    <h2 class="title-text">Test History</h2>
-    <button class="menu-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      fill="currentColor" viewBox="0 0 24 24">
-        <path d="M6 3h2v18H6V3zm5 6h2v12h-2V9zm5 4h2v8h-2v-8z"/>
-      </svg>
-    </button>
-  </div>
-
-  <!-- ================= SUBTITLE ================= -->
-  <div class="subtitle-bar">
-    <h3 class="subtitle">Risk Overview</h3>
-  </div>
-
-  <!-- ================= CHART ================= -->
-  <div class="chart-box">
-    <h4 class="chart-title">Monthly Trend</h4>
-    <p class="chart-subtitle">Risk Level progression over time</p>
-    <canvas id="riskChart" height="100"></canvas>
-  </div>
-
-  <!-- ================= STATS ================= -->
-  <div class="stats">
-    <div class="stat-box">
-      <h3 id="avgRisk">0%</h3>
-      <p>Avg. Risk</p>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>OptiGuard</span>
     </div>
-    <div class="stat-box">
-      <h3 id="totalScans">0</h3>
-      <p>Total Scans</p>
+    <nav class="nav">
+      <a class="active" href="dashboard.html">Dashboard</a>
+      <a href="diagnostics.html">Diagnostics</a>
+      <a href="donation.html">Donation</a>
+    </nav>
+    <div class="topbar-actions">
+      <button id="logoutBtn" class="btn ghost" title="Demo logout">Logout</button>
     </div>
-    <div class="stat-box trend-box">
-      <h3 id="trendText">Loading...</h3>
-      <p>Trend</p>
-    </div>
-  </div>
+  </header>
 
-  <!-- ================= REPORTS ================= -->
-  <div class="reports">
-    <div class="reports-header">
-      <h3 class="reports-title">Recent Reports</h3>
-      <a href="#" id="viewAllBtn" class="view-all">View All</a>
-    </div>
-    <!-- Dynamic reports go here -->
-    <div id="reportsContainer"></div>
-  </div>
+  <main class="container">
+    <h1 id="hello">Hello!</h1>
+    <p class="muted">This is your personal eye-health overview (demo data for now).</p>
 
-</div>
-
-<!-- ================= JAVASCRIPT ================= -->
-<script>
-/* Back button */
-function goBack(){
-  window.history.back();
-}
-
-let allReports = [];
-
-/* Fetch data from backend */
-fetch("http://localhost:5001/reports")
-.then(res => res.json())
-.then(data => {
-  allReports = data;
-  updateStats(data);
-  createChart(data);
-
-  // Show only 2 or 3 initially (instead of all)
-  showReports(data.slice(0,3));
-});
-
-/* ================= UPDATE STATS ================= */
-function updateStats(data){
-  const totalScans = data.length;
-  const totalRisk = data.reduce((sum,r)=>sum+r.risk,0);
-  const avgRisk = totalScans>0
-    ? (totalRisk/totalScans).toFixed(1)
-    : 0;
-
-  document.getElementById("avgRisk").innerText = avgRisk + "%";
-  document.getElementById("totalScans").innerText = totalScans;
-
-  let trend = "No Data";
-  if(data.length>=2){
-    const last = data[data.length-1].risk;
-    const prev = data[data.length-2].risk;
-    if(last>prev) trend="↑ Increasing";
-    else if(last<prev) trend="↓ Decreasing";
-    else trend="→ Stable";
-  }
-  document.getElementById("trendText").innerText = trend;
-}
-
-/* ================= CREATE CHART ================= */
-function createChart(data){
-  const labels = data.map(r=>r.date);
-  const risks = data.map(r=>r.risk);
-
-  new Chart(document.getElementById("riskChart"),{
-    type:"bar",
-    data:{
-      labels:labels,
-      datasets:[{
-        data:risks,
-        backgroundColor:"#2196F3"
-      }]
-    },
-    options:{
-      plugins:{legend:{display:false}},
-      scales:{y:{beginAtZero:true}}
-    }
-  });
-}
-
-/* ================= SHOW REPORTS ================= */
-function showReports(reports){
-  const container = document.getElementById("reportsContainer");
-  container.innerHTML = "";
-
-  reports.forEach(report=>{
-    let statusClass="status-low";
-    if(report.status.toLowerCase()==="medium") statusClass="status-medium";
-    if(report.status.toLowerCase()==="high") statusClass="status-high";
-
-    const card=document.createElement("div");
-    card.className="report-item";
-
-    card.innerHTML=`
-      <div class="report-left">
-        <span class="report-date">
-          ${new Date(report.date).toLocaleDateString('en-US',{
-            year:'numeric',month:'short',day:'numeric'
-          })}
-        </span>
-        <span class="report-time">${report.time}</span>
-        <div class="report-status">
-          <span class="status-dot ${statusClass}"></span>
-          <span>${report.status}</span>
+    <section class="card hero">
+      <div class="hero-left">
+        <h2>Instant Eye Wellness Scan</h2>
+        <p>Upload a fundus image for DR/Glaucoma screening and get a risk score.</p>
+        <div class="row gap">
+          <a class="btn primary" href="diagnostics.html">Scan My Eyes</a>
+          <a class="btn" href="donation.html">Support the Project</a>
         </div>
       </div>
-      <div class="report-right">
-        <div class="risk-value">${report.risk}%</div>
-        <div class="risk-label">Risk</div>
+      <div class="hero-right">
+        <div class="pill">AI Engine Ready</div>
+        <div class="pill">Focus: Optimal</div>
       </div>
-    `;
-    container.appendChild(card);
-  });
-}
+    </section>
 
-/* ================= VIEW ALL BUTTON ================= */
-document.getElementById("viewAllBtn")
-.addEventListener("click",function(e){
-  e.preventDefault();
+    <section class="grid-2">
+      <div class="card">
+        <div class="card-title">
+          <h3>Latest Risk Level</h3>
+          <span class="badge" id="latestBadge">—</span>
+        </div>
+        <p id="riskText" class="big">Loading…</p>
+        <p class="muted" id="riskNote">—</p>
+      </div>
 
-  //  Show all reports when clicked
-  showReports(allReports);
+      <div class="card">
+        <div class="card-title">
+          <h3>Today's Screen Usage</h3>
+          <span class="badge" id="usageBadge">—</span>
+        </div>
+        <p id="usageText" class="big">Loading…</p>
+        <p class="muted">Tip: follow the <b>20-20-20</b> rule to reduce eye strain.</p>
+        <button id="takeBreakBtn" class="btn">Send a 20-20-20 reminder</button>
+      </div>
+    </section>
 
-  // Hide button after expanding
-  this.style.display="none";
-});
-</script>
+    <section class="card">
+      <div class="card-title">
+        <h3>Recent Reports</h3>
+        <span class="muted">Last 30 days</span>
+      </div>
+      <div class="table" id="reports">
+        <div class="row header">
+          <div>Date</div>
+          <div>Test</div>
+          <div>Risk</div>
+        </div>
+        <!-- rows injected -->
+      </div>
+    </section>
+  </main>
 
+  <footer class="footer">
+    <span class="muted">OptiGuard • Demo build for your course project</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
 </body>
 </html>

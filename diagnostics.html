@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OptiGuard • Diagnostics</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>OptiGuard</span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a class="active" href="diagnostics.html">Diagnostics</a>
+      <a href="donation.html">Donation</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Diagnostics</h1>
+    <p class="muted">
+      Upload an image and run a scan. For <b>Diabetic Retinopathy</b> and <b>Glaucoma</b>, a <b>fundus (retina) image</b> is recommended.
+      (Right now this project returns demo predictions so you can test full-stack flow.)
+    </p>
+
+    <section class="card">
+      <h3>Run an AI Scan</h3>
+
+      <label class="label">Select test</label>
+      <select id="testSelect" class="input">
+        <option value="dr">Diabetic Retinopathy</option>
+        <option value="glaucoma">Glaucoma</option>
+        <option value="cataract">Cataract</option>
+        <option value="dryeye">Dry Eye (prototype)</option>
+      </select>
+
+      <label class="label">Upload image</label>
+      <input id="fileInput" type="file" accept="image/*" class="input" />
+
+      <button id="uploadBtn" class="btn primary">Run Scan</button>
+
+      <div id="resultBox" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h3>Ask OptiGuard (Chatbot • Demo)</h3>
+      <p class="muted">This is a placeholder chatbot endpoint. Later you can connect a real AI agent here.</p>
+
+      <div class="chat">
+        <div id="chatLog" class="chatlog"></div>
+        <div class="chatbar">
+          <input id="chatInput" class="input" placeholder="Ask a question…" />
+          <button id="chatSend" class="btn">Send</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="muted">OptiGuard • Diagnostics</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/diagnostics.js"></script>
+</body>
+</html>

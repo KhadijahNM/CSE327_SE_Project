@@ -1,98 +1,129 @@
-// server.js
 const express = require("express");
-const mysql = require("mysql2");
-const bcrypt = require("bcrypt");
 const cors = require("cors");
+const multer = require("multer");
+
+// IMPORTANT: db1.js should be in the same folder as server.js (backend/)
+const db = require("./db1");
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-// ======================
-// MySQL Connection
-// ======================
-const db = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root",          // change if your MySQL user is different
-  password: "",          // add your MySQL password if set
-  database: "optiguard_ai"
+// Uploads go to backend/uploads/
+const upload = multer({ dest: "uploads/" });
+
+// Health check
+app.get("/api/health", (req, res) => res.json({ ok: true }));
+
+// Demo user (later: replace with real login/JWT user)
+app.get("/api/me", (req, res) => {
+  res.json({ name: "Demo User" });
 });
 
-db.connect(err => {
-  if (err) {
-    console.error("❌ Database connection failed:", err);
-  } else {
-    console.log("✅ Connected to MySQL Database");
+/* ------------------ SCANS (Dashboard uses these) ------------------ */
+
+// Latest scan from DB
+app.get("/api/scans/latest", (req, res) => {
+  db.get(
+    "SELECT disease, risk_score, risk_label, created_at FROM reports ORDER BY created_at DESC LIMIT 1",
+    [],
+    (err, row) => {
+      if (err) return res.status(500).json({ ok: false, error: err.message });
+      res.json(row || null);
+    }
+  );
+});
+
+// Recent scans from DB
+app.get("/api/scans/recent", (req, res) => {
+  db.all(
+    "SELECT disease, risk_score, risk_label, created_at FROM reports ORDER BY created_at DESC LIMIT 10",
+    [],
+    (err, rows) => {
+      if (err) return res.status(500).json({ ok: false, error: err.message });
+      res.json(rows || []);
+    }
+  );
+});
+
+// Upload + demo prediction + SAVE into DB (THIS is the missing dynamic part)
+app.post("/api/scans/upload", upload.single("image"), (req, res) => {
+  const test = (req.query.test || "dr").toLowerCase();
+
+  if (!req.file) {
+    return res.status(400).json({ ok: false, error: "No file uploaded" });
   }
+
+  // Demo prediction (replace later with ML)
+  const map = {
+    dr: { disease: "Diabetic Retinopathy", risk_score: 30, risk_label: "Medium" },
+    glaucoma: { disease: "Glaucoma", risk_score: 35, risk_label: "Medium" },
+    cataract: { disease: "Cataract", risk_score: 18, risk_label: "Low" },
+    dryeye: { disease: "Dry Eye (prototype)", risk_score: 40, risk_label: "Medium" }
+  };
+  const pred = map[test] || map.dr;
+
+  // Save report to DB so dashboard becomes dynamic
+  db.run(
+    "INSERT INTO reports (disease, risk_score, risk_label) VALUES (?,?,?)",
+    [pred.disease, pred.risk_score, pred.risk_label],
+    function (err) {
+      if (err) return res.status(500).json({ ok: false, error: err.message });
+      res.json({ ok: true, id: this.lastID, ...pred });
+    }
+  );
 });
 
-// ======================
-// Signup Route
-// ======================
-app.post("/signup", async (req, res) => {
-  const { fullname, email, password } = req.body;
+/* ------------------ USAGE (Optional dynamic later) ------------------ */
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const sql = "INSERT INTO user_info (fullname, email, password_hash) VALUES (?, ?, ?)";
+app.get("/api/usage/today", (req, res) => {
+  // Keep it static for now (you can make it DB-based later)
+  res.json({ minutes: 260 });
+});
 
-    db.query(sql, [fullname, email, hashedPassword], (err, result) => {
-      if (err) {
-        console.error("Signup Error:", err);
-        return res.json({
-          message: "❌ Error creating account",
-          error: err.sqlMessage || err.message
-        });
-      }
-      res.json({ message: "✅ Account created successfully" });
-    });
-  } catch (error) {
-    console.error("Signup Exception:", error);
-    res.json({ message: "❌ Error creating account", error: error.message });
+app.post("/api/usage/break", (req, res) => {
+  res.json({ ok: true, saved: true });
+});
+
+/* ------------------ DONATIONS (Save into DB) ------------------ */
+
+app.post("/api/donations", (req, res) => {
+  const { amount, currency } = req.body || {};
+  if (!amount) {
+    return res.status(400).json({ ok: false, error: "Amount required" });
   }
-});
 
-// ======================
-// Login Route
-// ======================
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-
-  const sql = "SELECT * FROM user_info WHERE email = ?";
-  db.query(sql, [email], async (err, results) => {
-    if (err) {
-      console.error("Login Error:", err);
-      return res.json({
-        message: "❌ Server Error",
-        error: err.sqlMessage || err.message
-      });
+  db.run(
+    "INSERT INTO donations (amount, currency) VALUES (?,?)",
+    [amount, currency || "BDT"],
+    function (err) {
+      if (err) return res.status(500).json({ ok: false, error: err.message });
+      res.json({ ok: true, id: this.lastID });
     }
+  );
+});
 
-    if (results.length === 0) {
-      return res.json({ message: "❌ User not found" });
+// (Optional) view donation history
+app.get("/api/donations/recent", (req, res) => {
+  db.all(
+    "SELECT amount, currency, created_at FROM donations ORDER BY created_at DESC LIMIT 10",
+    [],
+    (err, rows) => {
+      if (err) return res.status(500).json({ ok: false, error: err.message });
+      res.json(rows || []);
     }
-
-    const user = results[0];
-    const match = await bcrypt.compare(password, user.password_hash);
-
-    if (!match) {
-      return res.json({ message: "❌ Invalid password" });
-    }
-
-    res.json({ message: "✅ Login successful" });
-  });
+  );
 });
 
-// ======================
-// Root Route
-// ======================
-app.get("/", (req, res) => {
-  res.send("🚀 Backend is running and ready!");
+/* ------------------ CHATBOT (Still demo) ------------------ */
+
+app.post("/api/agents/chat", (req, res) => {
+  const msg = req.body?.message ? String(req.body.message) : "";
+  const reply =
+    "Demo reply: I can explain your risk score and suggest habits like 20-20-20. " +
+    "For any serious symptoms, please consult an eye specialist.";
+  res.json({ ok: true, reply: msg ? reply : "Ask me a question!" });
 });
 
-// ======================
-// Start Server
-// ======================
-app.listen(3000, () => {
-  console.log("🚀 Server running on http://127.0.0.1:3000");
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));

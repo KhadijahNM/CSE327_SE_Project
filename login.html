@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <!-- NORMAL JS -->
+  <!-- ================= NORMAL AUTH ================= -->
   <script>
     let isSignup = true;
 
@@ -115,7 +115,6 @@
         });
 
         const result = await response.json();
-
         alert(result.message);
 
       } catch (error) {
@@ -124,7 +123,7 @@
     }
   </script>
 
-  <!-- 🔥 FIREBASE SCRIPT -->
+  <!-- ================= FIREBASE ================= -->
   <script type="module">
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -135,26 +134,42 @@
       signInWithPopup
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // 🔴 REPLACE THIS WITH YOUR CONFIG
+    // ✅ Firebase Config (YOUR PROJECT)
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDJkB6803uB1uHpCs9TyiXAjOZlqXc08OQ",
+      authDomain: "optiguardai-98cf0.firebaseapp.com",
+      projectId: "optiguardai-98cf0",
+      storageBucket: "optiguardai-98cf0.appspot.com",
+      messagingSenderId: "533578769139",
+      appId: "1:533578769139:web:f252ec05698b05e162cd86"
     };
 
+    // ✅ Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // Providers
     const googleProvider = new GoogleAuthProvider();
     const facebookProvider = new FacebookAuthProvider();
 
-    // GOOGLE LOGIN
+    // ================= GOOGLE LOGIN =================
     window.loginWithGoogle = function () {
       signInWithPopup(auth, googleProvider)
         .then((result) => {
           const user = result.user;
+
           alert("✅ Google Login: " + user.email);
+
+          // OPTIONAL: send to backend
+          fetch("http://127.0.0.1:3000/social-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: user.displayName,
+              email: user.email
+            })
+          });
+
         })
         .catch((error) => {
           console.error(error);
@@ -162,12 +177,24 @@
         });
     };
 
-    // FACEBOOK LOGIN
+    // ================= FACEBOOK LOGIN =================
     window.loginWithFacebook = function () {
       signInWithPopup(auth, facebookProvider)
         .then((result) => {
           const user = result.user;
+
           alert("✅ Facebook Login: " + user.email);
+
+          // OPTIONAL: send to backend
+          fetch("http://127.0.0.1:3000/social-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: user.displayName,
+              email: user.email
+            })
+          });
+
         })
         .catch((error) => {
           console.error(error);

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>OptiGuard AI</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+
+  <div class="login-card">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <img src="logo.png" class="logo" alt="OptiGuard AI Logo">
+      <h2>OptiGuard AI</h2>
+      <p>
+        Advanced AI health monitoring for early detection and clearer tomorrow
+      </p>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+
+      <h3>Welcome to OptiGuard AI</h3>
+
+      <form id="authForm">
+
+        <!-- Tabs -->
+        <div class="role-buttons">
+          <button type="button" class="active" onclick="showSignup()">Signup</button>
+          <button type="button" onclick="showLogin()">Login</button>
+        </div>
+
+        <!-- Full Name (Signup Only) -->
+        <div id="nameField">
+          <label>Full Name</label>
+          <input type="text" id="fullname" name="fullname" placeholder="Enter Your Full Name">
+        </div>
+
+        <!-- Email -->
+        <label>Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter Your Email">
+
+        <!-- Password -->
+        <label>Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter Password">
+
+        <!-- Main Button -->
+        <button type="button" class="main-btn" id="mainActionBtn" onclick="handleAuth()">
+          Create Account
+        </button>
+
+      </form>
+
+      <!-- Continue Text -->
+      <div class="continue-text">
+        Continue With
+      </div>
+
+      <!-- Social Buttons Side by Side -->
+      <div class="social-row">
+        <!-- Google -->
+        <button type="button" class="social-box">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
+          Google
+        </button>
+
+        <!-- Facebook -->
+        <button type="button" class="social-box">
+          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook Logo">
+          Facebook
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Track current mode
+    let isSignup = true;
+
+    // Show Signup
+    function showSignup() {
+      isSignup = true;
+      document.getElementById("nameField").style.display = "block";
+      document.getElementById("mainActionBtn").innerText = "Create Account";
+
+      // Toggle button styles
+      document.querySelector(".role-buttons button:nth-child(1)").classList.add("active");
+      document.querySelector(".role-buttons button:nth-child(2)").classList.remove("active");
+    }
+
+    // Show Login
+    function showLogin() {
+      isSignup = false;
+      document.getElementById("nameField").style.display = "none";
+      document.getElementById("mainActionBtn").innerText = "Login";
+
+      // Toggle button styles
+      document.querySelector(".role-buttons button:nth-child(2)").classList.add("active");
+      document.querySelector(".role-buttons button:nth-child(1)").classList.remove("active");
+    }
+
+    // Handle Signup / Login
+    async function handleAuth() {
+      const fullname = document.getElementById("fullname")?.value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        let url = "";
+        let data = {};
+
+        if (isSignup) {
+          url = "http://127.0.0.1:3000/signup";
+          data = { fullname, email, password };
+        } else {
+          url = "http://127.0.0.1:3000/login";
+          data = { email, password };
+        }
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.error) {
+          alert(result.message + "\nDetails: " + result.error);
+        } else {
+          alert(result.message);
+        }
+
+      } catch (error) {
+        console.error("Connection Error:", error);
+        alert("❌ Cannot connect to server");
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+

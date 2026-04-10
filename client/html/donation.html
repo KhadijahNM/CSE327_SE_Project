@@ -1,60 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OptiGuard • Donation</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptiGuard AI — Donate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/donation.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-dot"></span>
-      <span>OptiGuard</span>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="/" class="sidebar-brand">
+    <div class="brand-icon">👁</div>
+    <span class="brand-name">OptiGuard AI</span>
+  </a>
+
+  <nav class="sidebar-nav">
+    <span class="nav-label">Main</span>
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="diagnostics.html" class="nav-item">
+      <span class="nav-icon">🔬</span> Diagnostics
+    </a>
+    <a href="donation.html" class="nav-item active">
+      <span class="nav-icon">❤️</span> Donate
+    </a>
+    <span class="nav-label">Account</span>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">U</div>
+      <div>
+        <div class="user-name">User</div>
+        <div class="user-role">Patient</div>
+      </div>
     </div>
-    <nav class="nav">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="diagnostics.html">Diagnostics</a>
-      <a class="active" href="donation.html">Donation</a>
-    </nav>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Donate ❤️</h1>
+      <p>Support free eye screening for those who need it most.</p>
+    </div>
   </header>
 
-  <main class="container">
-    <h1>Donation</h1>
-    <p class="muted">This is a demo donation page. For your course, you can store donation history in DB (and later add real payment gateway).</p>
+  <div class="content">
 
-    <section class="card">
-      <h3>Support OptiGuard AI</h3>
+    <!-- Impact Banner -->
+    <div class="impact-banner">
+      <div class="impact-text">
+        <h2>Your donation funds free eye care.</h2>
+        <p>Every contribution helps us provide AI-powered eye screening to underserved communities in Bangladesh and beyond.</p>
+      </div>
+      <div class="impact-stats">
+        <div class="impact-stat">
+          <div class="impact-stat-num">1,200+</div>
+          <div class="impact-stat-label">Patients screened</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-num">94%</div>
+          <div class="impact-stat-label">Detection rate</div>
+        </div>
+      </div>
+    </div>
 
-      <label class="label">Enter amount (BDT)</label>
-      <input id="amount" class="input" type="number" value="500" min="1" />
+    <!-- Main Grid -->
+    <div class="main-grid">
 
-      <div class="row gap">
-        <button class="btn" data-quick="50">৳50</button>
-        <button class="btn" data-quick="250">৳250</button>
-        <button class="btn primary" data-quick="500">৳500</button>
-        <button class="btn" data-quick="1000">৳1000</button>
+      <!-- Donation Form -->
+      <div class="card">
+        <div class="card-title">Make a Donation</div>
+        <div class="card-subtitle">All amounts in BDT. Every taka makes a difference.</div>
+
+        <label class="amount-label">Donation Amount</label>
+        <div class="amount-input-wrap">
+          <div class="currency-tag">৳</div>
+          <input type="number" class="amount-input" id="amount" value="500" min="1">
+        </div>
+
+        <span class="quick-label">Quick select</span>
+        <div class="quick-row">
+          <button class="quick-btn" data-amount="50">৳50</button>
+          <button class="quick-btn" data-amount="250">৳250</button>
+          <button class="quick-btn selected" data-amount="500">৳500</button>
+          <button class="quick-btn" data-amount="1000">৳1,000</button>
+        </div>
+
+        <label class="amount-label" style="margin-bottom:8px;">Message (optional)</label>
+        <textarea class="msg-input" id="donorMsg" placeholder="Leave an encouraging message..."></textarea>
+
+        <button class="donate-btn" id="donateBtn">Donate ৳500 Now</button>
+        <div class="secure-note">🔒 Secure demo transaction · No real payment processed</div>
       </div>
 
-      <button id="donateBtn" class="btn primary big">Donate Now</button>
+      <!-- Right sidebar -->
+      <div>
+        <div class="card sidebar-card">
+          <div class="card-title" style="margin-bottom:16px;">Your Impact</div>
 
-      <p id="donateMsg" class="muted" style="margin-top:10px;"></p>
-    </section>
+          <div class="impact-item">
+            <div class="impact-icon">👁️</div>
+            <div>
+              <div class="impact-item-title">৳50 — One screening</div>
+              <div class="impact-item-desc">Funds a complete AI eye scan for one patient.</div>
+            </div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-icon">🔬</div>
+            <div>
+              <div class="impact-item-title">৳250 — Five screenings</div>
+              <div class="impact-item-desc">Helps an entire family get checked for eye disease.</div>
+            </div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-icon">🏥</div>
+            <div>
+              <div class="impact-item-title">৳1,000 — Community drive</div>
+              <div class="impact-item-desc">Supports a full community screening camp for a day.</div>
+            </div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-icon">❤️</div>
+            <div>
+              <div class="impact-item-title">Any amount helps</div>
+              <div class="impact-item-desc">Every contribution goes directly to patient care.</div>
+            </div>
+          </div>
+        </div>
 
-    <section class="card">
-      <h3>Donation Notes</h3>
-      <ul class="muted" style="margin:0; padding-left:18px;">
-        <li>This demo stores donations via a backend API endpoint.</li>
-        <li>Later you can connect a gateway (SSLCommerz / Stripe / etc.) if required.</li>
-      </ul>
-    </section>
-  </main>
+        <!-- Recent donations -->
+        <div class="card recent-card">
+          <div class="card-title" style="margin-bottom:16px;">Recent Donations</div>
+          <div id="recentDonations">
+            <div class="empty">
+              <div class="empty-icon">💙</div>
+              Be the first to donate!
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <footer class="footer">
-    <span class="muted">OptiGuard • Donation</span>
-  </footer>
+    </div>
+  </div>
+</div>
 
-<script src="/js/api.js"></script>
-<script src="/js/diagnostics.js"></script>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const amountInput = document.getElementById('amount');
+  const donateBtn = document.getElementById('donateBtn');
+  const quickBtns = document.querySelectorAll('.quick-btn');
+
+  // ── Toast ──
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // ── Update button label ──
+  function updateBtn() {
+    const val = parseInt(amountInput.value) || 0;
+    donateBtn.textContent = `Donate ৳${val.toLocaleString()} Now`;
+  }
+
+  amountInput.addEventListener('input', () => {
+    quickBtns.forEach(b => b.classList.remove('selected'));
+    updateBtn();
+  });
+
+  // ── Quick select ──
+  quickBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      quickBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      amountInput.value = btn.dataset.amount;
+      updateBtn();
+    });
+  });
+
+  // ── Donate ──
+  donateBtn.addEventListener('click', async () => {
+    const amount = parseInt(amountInput.value);
+    if (!amount || amount < 1) return showToast('Please enter a valid amount.', 'error');
+
+    donateBtn.textContent = 'Processing...';
+    donateBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/donations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, currency: 'BDT' })
+      });
+      const result = await res.json();
+
+      if (result.ok) {
+        donateBtn.textContent = '✓ Thank you!';
+        showToast(`💙 Thank you for donating ৳${amount.toLocaleString()}!`, 'success');
+        document.getElementById('donorMsg').value = '';
+        loadRecent();
+        setTimeout(() => {
+          donateBtn.textContent = `Donate ৳${amount.toLocaleString()} Now`;
+          donateBtn.disabled = false;
+        }, 3000);
+      } else {
+        throw new Error(result.error);
+      }
+    } catch(e) {
+      showToast('Could not process donation. Try again.', 'error');
+      donateBtn.textContent = `Donate ৳${amount.toLocaleString()} Now`;
+      donateBtn.disabled = false;
+    }
+  });
+
+  // ── Load recent donations ──
+  async function loadRecent() {
+    try {
+      const res = await fetch('/api/donations/recent');
+      const rows = await res.json();
+      if (!rows.length) return;
+
+      const emojis = ['🌟','💙','❤️','🙏','✨','🎯','💫'];
+      document.getElementById('recentDonations').innerHTML = rows.map((r, i) => {
+        const d = new Date(r.created_at);
+        const timeStr = isNaN(d) ? 'Recently' : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
+        return `
+          <div class="donation-row" style="animation-delay:${i*0.05}s">
+            <div class="donation-avatar">${emojis[i % emojis.length]}</div>
+            <div class="donation-info">
+              <div class="donation-name">Anonymous Donor</div>
+              <div class="donation-time">${timeStr}</div>
+            </div>
+            <div class="donation-amount">৳${Number(r.amount).toLocaleString()}</div>
+          </div>`;
+      }).join('');
+    } catch(e) { console.warn('Could not load donations'); }
+  }
+
+  updateBtn();
+  loadRecent();
+</script>
 </body>
 </html>

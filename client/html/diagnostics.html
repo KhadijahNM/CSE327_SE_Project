@@ -1,69 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OptiGuard • Diagnostics</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptiGuard AI — Diagnostics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/diagnostics.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-dot"></span>
-      <span>OptiGuard</span>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="/" class="sidebar-brand">
+    <div class="brand-icon">👁</div>
+    <span class="brand-name">OptiGuard AI</span>
+  </a>
+
+  <nav class="sidebar-nav">
+    <span class="nav-label">Main</span>
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="diagnostics.html" class="nav-item active">
+      <span class="nav-icon">🔬</span> Diagnostics
+    </a>
+    <a href="donation.html" class="nav-item">
+      <span class="nav-icon">❤️</span> Donate
+    </a>
+    <span class="nav-label">Account</span>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">U</div>
+      <div>
+        <div class="user-name">User</div>
+        <div class="user-role">Patient</div>
+      </div>
     </div>
-    <nav class="nav">
-      <a href="dashboard.html">Dashboard</a>
-      <a class="active" href="diagnostics.html">Diagnostics</a>
-      <a href="donation.html">Donation</a>
-    </nav>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>🔬 Diagnostics</h1>
+      <p>Upload a retinal image and run an AI-powered eye scan.</p>
+    </div>
   </header>
 
-  <main class="container">
-    <h1>Diagnostics</h1>
-    <p class="muted">
-      Upload an image and run a scan. For <b>Diabetic Retinopathy</b> and <b>Glaucoma</b>, a <b>fundus (retina) image</b> is recommended.
-      (Right now this project returns demo predictions so you can test full-stack flow.)
-    </p>
+  <div class="content">
+    <div class="page-grid">
 
-    <section class="card">
-      <h3>Run an AI Scan</h3>
+      <!-- LEFT: Scan form -->
+      <div>
+        <div class="card">
+          <div class="card-title">Run an AI Scan</div>
+          <div class="card-subtitle">Select a condition to screen for, then upload a fundus image. Demo predictions are returned for testing the full-stack flow.</div>
 
-      <label class="label">Select test</label>
-      <select id="testSelect" class="input">
-        <option value="dr">Diabetic Retinopathy</option>
-        <option value="glaucoma">Glaucoma</option>
-        <option value="cataract">Cataract</option>
-        <option value="dryeye">Dry Eye (prototype)</option>
-      </select>
+          <!-- Test selector -->
+          <div style="font-size:0.78rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Select condition</div>
+          <div class="test-grid" id="testGrid">
+            <label class="test-option selected">
+              <input type="radio" name="test" value="dr" checked>
+              <div class="test-check">✓</div>
+              <div class="test-name">Diabetic Retinopathy</div>
+              <div class="test-desc">Fundus image recommended</div>
+            </label>
+            <label class="test-option">
+              <input type="radio" name="test" value="glaucoma">
+              <div class="test-check">✓</div>
+              <div class="test-name">Glaucoma</div>
+              <div class="test-desc">Optic nerve assessment</div>
+            </label>
+            <label class="test-option">
+              <input type="radio" name="test" value="cataract">
+              <div class="test-check">✓</div>
+              <div class="test-name">Cataract</div>
+              <div class="test-desc">Lens clarity screening</div>
+            </label>
+            <label class="test-option">
+              <input type="radio" name="test" value="dryeye">
+              <div class="test-check">✓</div>
+              <div class="test-name">Dry Eye</div>
+              <div class="test-desc">Prototype — surface test</div>
+            </label>
+          </div>
 
-      <label class="label">Upload image</label>
-      <input id="fileInput" type="file" accept="image/*" class="input" />
+          <!-- Upload -->
+          <div style="font-size:0.78rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Upload image</div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept="image/*">
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-title">Drop image here or click to browse</div>
+            <div class="upload-hint">PNG, JPG, WEBP up to 10MB</div>
+          </div>
 
-      <button id="uploadBtn" class="btn primary">Run Scan</button>
+          <div class="upload-preview" id="uploadPreview">
+            <img id="previewImg" src="" alt="Preview">
+            <button class="preview-remove" id="removeImg">✕</button>
+          </div>
 
-      <div id="resultBox" class="result" aria-live="polite"></div>
-    </section>
+          <button class="scan-btn" id="uploadBtn">
+            <span>🔬</span> Run Scan
+          </button>
 
-    <section class="card">
-      <h3>Ask OptiGuard (Chatbot • Demo)</h3>
-      <p class="muted">This is a placeholder chatbot endpoint. Later you can connect a real AI agent here.</p>
-
-      <div class="chat">
-        <div id="chatLog" class="chatlog"></div>
-        <div class="chatbar">
-          <input id="chatInput" class="input" placeholder="Ask a question…" />
-          <button id="chatSend" class="btn">Send</button>
+          <!-- Result -->
+          <div class="result-box" id="resultBox">
+            <div class="result-header">
+              <div class="result-icon" id="resultIcon"></div>
+              <div>
+                <div class="result-title" id="resultDisease"></div>
+                <div class="result-label">AI Risk Assessment</div>
+              </div>
+            </div>
+            <div class="result-score" id="resultScore"></div>
+            <div class="result-label" id="resultLabel"></div>
+            <div class="result-bar-wrap">
+              <div class="result-bar" id="resultBar" style="width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted-light);">
+              <span>0 — Low</span><span>50 — Medium</span><span>100 — High</span>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-  </main>
 
-  <footer class="footer">
-    <span class="muted">OptiGuard • Diagnostics</span>
-  </footer>
+      <!-- RIGHT: Chatbot -->
+      <div class="card chat-card">
+        <div class="card-title">💬 Ask OptiGuard</div>
+        <div class="card-subtitle">Ask questions about your results or eye health. Demo AI chatbot.</div>
 
- <script src="/js/api.js"></script>
-<script src="/js/diagnostics.js"></script>
+        <div class="chatlog" id="chatLog">
+          <div class="chat-msg bot">
+            <div class="chat-avatar">👁</div>
+            <div class="chat-bubble">Hi! I'm OptiGuard's AI assistant. Ask me anything about your eye health or scan results.</div>
+          </div>
+        </div>
+
+        <div class="chat-bar">
+          <input class="chat-input" id="chatInput" placeholder="Ask a question…">
+          <button class="chat-send" id="chatSend">➤</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Toast ──
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Test selector ──
+  document.querySelectorAll('.test-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.test-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      opt.querySelector('input').checked = true;
+    });
+  });
+
+  // ── File upload / preview ──
+  const fileInput = document.getElementById('fileInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const uploadPreview = document.getElementById('uploadPreview');
+  const previewImg = document.getElementById('previewImg');
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    previewImg.src = url;
+    uploadPreview.style.display = 'block';
+    uploadZone.style.display = 'none';
+  });
+
+  document.getElementById('removeImg').addEventListener('click', () => {
+    fileInput.value = '';
+    previewImg.src = '';
+    uploadPreview.style.display = 'none';
+    uploadZone.style.display = 'block';
+  });
+
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+      previewImg.src = URL.createObjectURL(file);
+      uploadPreview.style.display = 'block';
+      uploadZone.style.display = 'none';
+    }
+  });
+
+  // ── Scan ──
+  document.getElementById('uploadBtn').addEventListener('click', async () => {
+    const file = fileInput.files[0];
+    if (!file) return showToast('Please upload an image first.', 'error');
+
+    const test = document.querySelector('input[name="test"]:checked').value;
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Analysing…';
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch(`/api/scans/upload?test=${test}`, { method: 'POST', body: formData });
+      const result = await res.json();
+
+      if (!result.ok) throw new Error(result.error);
+
+      const level = (result.risk_label || 'Low').toLowerCase();
+      const icons = { low: '✅', medium: '⚠️', high: '🔴' };
+
+      const box = document.getElementById('resultBox');
+      box.className = `result-box ${level}`;
+      box.style.display = 'block';
+
+      document.getElementById('resultIcon').textContent = icons[level] || '🔬';
+      document.getElementById('resultDisease').textContent = result.disease;
+      document.getElementById('resultScore').textContent = result.risk_score;
+      document.getElementById('resultScore').className = `result-score ${level}`;
+      document.getElementById('resultLabel').textContent = `${result.risk_label} Risk`;
+
+      const bar = document.getElementById('resultBar');
+      bar.className = `result-bar ${level}`;
+      setTimeout(() => bar.style.width = result.risk_score + '%', 100);
+
+      showToast('✓ Scan complete!', 'success');
+    } catch(e) {
+      showToast('Scan failed. Try again.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>🔬</span> Run Scan';
+    }
+  });
+
+  // ── Chatbot ──
+  function addMessage(text, type) {
+    const log = document.getElementById('chatLog');
+    const isBot = type === 'bot';
+    const div = document.createElement('div');
+    div.className = `chat-msg ${type}`;
+    div.innerHTML = `
+      <div class="chat-avatar">${isBot ? '👁' : 'U'}</div>
+      <div class="chat-bubble">${text}</div>
+    `;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function addTyping() {
+    const log = document.getElementById('chatLog');
+    const div = document.createElement('div');
+    div.className = 'chat-msg bot';
+    div.id = 'typingIndicator';
+    div.innerHTML = `
+      <div class="chat-avatar">👁</div>
+      <div class="chat-bubble"><div class="typing"><span></span><span></span><span></span></div></div>
+    `;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, 'user');
+    input.value = '';
+    document.getElementById('chatSend').disabled = true;
+    addTyping();
+
+    try {
+      const res = await fetch('/api/agents/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const result = await res.json();
+      document.getElementById('typingIndicator')?.remove();
+      addMessage(result.reply || 'Sorry, I could not respond.', 'bot');
+    } catch(e) {
+      document.getElementById('typingIndicator')?.remove();
+      addMessage('Connection error. Please try again.', 'bot');
+    } finally {
+      document.getElementById('chatSend').disabled = false;
+    }
+  }
+
+  document.getElementById('chatSend').addEventListener('click', sendChat);
+  document.getElementById('chatInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendChat();
+  });
+</script>
 </body>
 </html>

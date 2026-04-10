@@ -1,254 +1,109 @@
-/* =========================
-   PAGE BACKGROUND
-   ========================= */
-body{
-  font-family: Arial, sans-serif;
-  background:#f5f7fb;
+/* ============================================
+   OptiGuard AI — Dashboard Page Styles
+   ============================================ */
+
+body { display: flex; }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; transition: transform 0.2s, box-shadow 0.2s; animation: fadeUp 0.5s ease both; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.07); }
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+.stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.stat-label-text { font-size: 0.78rem; font-weight: 500; color: var(--muted); letter-spacing: 0.02em; }
+.stat-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.stat-icon.blue { background: var(--accent-light); }
+.stat-icon.green { background: var(--success-light); }
+.stat-icon.yellow { background: var(--warning-light); }
+.stat-icon.red { background: var(--danger-light); }
+
+.stat-value { font-family: 'Syne', sans-serif; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; }
+.stat-sub { font-size: 0.75rem; color: var(--muted-light); }
+
+.stat-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 500; padding: 2px 8px; border-radius: 100px; }
+.stat-badge.green { background: var(--success-light); color: #16a34a; }
+.stat-badge.yellow { background: var(--warning-light); color: #d97706; }
+.stat-badge.red { background: var(--danger-light); color: #dc2626; }
+.stat-badge.blue { background: var(--accent-light); color: var(--accent-dark); }
+
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+
+/* Hero card */
+.hero-card {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+  border: none; color: white;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 32px; margin-bottom: 20px;
+  animation: fadeUp 0.5s ease 0.05s both;
+  position: relative; overflow: hidden;
 }
+.hero-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+.hero-card::after { content: ''; position: absolute; bottom: -40px; right: 120px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.04); }
 
-/* =========================
-   MAIN DASHBOARD CONTAINER
-   ========================= */
-.dashboard {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+.hero-text h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+.hero-text p { font-size: 0.85rem; opacity: 0.8; max-width: 380px; line-height: 1.5; }
+.hero-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+.hero-btn { padding: 9px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; text-decoration: none; cursor: pointer; border: none; transition: all 0.15s; }
+.hero-btn.white { background: white; color: var(--accent-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.hero-btn.white:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.hero-btn.outline { background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.25); }
+.hero-btn.outline:hover { background: rgba(255,255,255,0.2); }
+
+.hero-pills { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.hero-pill { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; padding: 6px 14px; font-size: 0.78rem; color: white; white-space: nowrap; }
+
+/* Risk gauge */
+.risk-display { text-align: center; padding: 12px 0; }
+.risk-score { font-family: 'Syne', sans-serif; font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-bottom: 6px; }
+.risk-score.low { color: var(--success); }
+.risk-score.medium { color: var(--warning); }
+.risk-score.high { color: var(--danger); }
+.risk-label-text { font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; }
+.risk-bar-wrap { background: var(--bg); border-radius: 100px; height: 6px; overflow: hidden; margin-bottom: 8px; }
+.risk-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+.risk-bar-fill.low { background: var(--success); }
+.risk-bar-fill.medium { background: var(--warning); }
+.risk-bar-fill.high { background: var(--danger); }
+.risk-range { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted-light); }
+
+/* Reports table */
+.report-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px; font-size: 0.85rem; animation: fadeUp 0.4s ease both; }
+.report-row:last-child { border-bottom: none; }
+.report-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.report-dot.low { background: var(--success); }
+.report-dot.medium { background: var(--warning); }
+.report-dot.high { background: var(--danger); }
+.report-date { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; width: 80px; }
+.report-disease { flex: 1; font-weight: 500; }
+.report-badge { font-size: 0.72rem; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
+.report-badge.Low { background: var(--success-light); color: #16a34a; }
+.report-badge.Medium { background: var(--warning-light); color: #d97706; }
+.report-badge.High { background: var(--danger-light); color: #dc2626; }
+
+/* 20-20-20 tip card */
+.tip-card { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid rgba(14,165,233,0.15); }
+.tip-number { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--accent); letter-spacing: -0.04em; line-height: 1; }
+.tip-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin: 8px 0 16px; }
+.reminder-btn { width: 100%; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.15s; }
+.reminder-btn:hover { background: var(--accent-dark); transform: translateY(-1px); }
+.reminder-btn:disabled { background: var(--success); cursor: default; transform: none; }
+
+@media (max-width: 1024px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr; }
 }
-
-/* =========================
-   TITLE BAR
-   ========================= */
-.title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #ddd;
-}
-
-.title-text {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-  color: black;
-}
-
-/* Buttons for back and menu */
-.icon-btn, .menu-btn {
-  background: none;
-  border: none;
-  color: black;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-/* =========================
-   SUBTITLE BAR
-   ========================= */
-.subtitle-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 15px 0;
-}
-
-.subtitle {
-  font-size: 24px;
-  font-weight: bold;
-  color: black;
-}
-
-/* Filter section */
-.filter-section {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #2196F3;
-}
-
-.filter-text {
-  font-size: 14px;
-  font-weight: bold;
-  color: #2196F3;
-}
-
-/* =========================
-   CHART BOX
-   ========================= */
-.chart-box {
-  background: #B0E0E6;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.chart-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-  color: #002171;
-}
-
-.chart-subtitle {
-  margin: 5px 0 15px;
-  font-size: 14px;
-  color: #002171;
-}
-
-/* =========================
-   STATISTICS CARDS
-   ========================= */
-.stats {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-  text-align: center;
-}
-
-/* Individual stat card */
-.stat-box {
-  flex: 1;
-  background: #B0E0E6;
-  margin: 0 10px;
-  padding: 15px;
-  border-radius: 8px;
-  color: black;
-
-  /* ✅ Center content horizontally & vertically */
-  display: flex;              
-  flex-direction: column;     
-  align-items: center;        
-  justify-content: center;    
-  text-align: center;         
-}
-
-/* Numbers inside cards */
-.stat-box h3 {
-  margin: 0;
-  color: #0D47A1;
-}
-
-/* Icon container */
-.stat-icon {
-  margin-bottom: 8px;
-}
-
-/* Center icon */
-.stat-icon svg {
-  display: block;
-  margin: 0 auto;
-}
-
-/* =========================
-   TREND CARD ADJUSTMENT
-   ========================= */
-.trend-box h3{
-  margin-top:0;   /* ✅ Removed extra spacing so it aligns like Avg Risk & Total Scans */
-}
-
-/* =========================
-   REPORT HEADER
-   ========================= */
-.reports-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-}
-
-.reports-title{
-  font-size:22px;
-  font-weight:bold;
-  color:black;
-}
-
-.view-all{
-  font-size:14px;
-  color:#2196F3;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-/* =========================
-   REPORT CARD
-   ========================= */
-.report-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  background:white;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.08);
-
-  padding:15px;
-  margin-bottom:12px;
-}
-
-/* Left section */
-.report-left{
-  display:flex;
-  flex-direction:column;
-}
-
-.report-date{
-  font-size:15px;
-  font-weight:bold;
-  color:black;
-}
-
-.report-time{
-  font-size:13px;
-  color:#666;
-  margin-bottom:6px;
-}
-
-/* Status line */
-.report-status{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:14px;
-}
-
-/* =========================
-   STATUS DOT COLORS
-   ========================= */
-/* ✅ Changed this portion so colors depend on Low/Medium/High */
-.status-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  display:inline-block;
-}
-
-.status-low {
-  background:#4CAF50;   /* Green for Low */
-}
-
-.status-medium {
-  background:#FFC107;   /* Amber/Yellow for Medium */
-}
-
-.status-high {
-  background:#F44336;   /* Red for High */
-}
-
-/* Right section */
-.report-right{
-  text-align:right;
-}
-
-.risk-value{
-  font-size:20px;
-  font-weight:bold;
-  color:#0D47A1;
-}
-
-.risk-label{
-  font-size:13px;
-  color:#666;
+@media (max-width: 768px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .hero-card { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .hero-pills { flex-direction: row; flex-wrap: wrap; }
 }

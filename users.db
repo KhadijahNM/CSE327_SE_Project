@@ -1,0 +1,7 @@
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  role ENUM('Admin','Users') DEFAULT 'Users',
+  status ENUM('Active','Inactive','New') DEFAULT 'Active'
+);

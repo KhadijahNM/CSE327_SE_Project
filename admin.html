@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <!-- IDs match exactly -->
+      <li onclick="showTab('usersTab')">Users</li>
+      <li onclick="showTab('reportsTab')">Reports</li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h2>Admin Dashboard</h2>
+      <div class="profile">Admin 🔔</div>
+    </div>
+
+    <!-- Users Tab -->
+    <div id="usersTab" class="tab active">
+      <h3>User Management</h3>
+      <button onclick="openAddUserForm()">+ Add User</button>
+      <div class="filters">
+        <select id="roleFilter">
+          <option value="">All Roles</option>
+          <option value="Admin">Admin</option>
+          <option value="User">User</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+        <button onclick="applyFilters()">Filter</button>
+      </div>
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Reports Overview -->
+    <div id="reportsTab" class="tab hidden">
+      <h3>Reports Overview</h3>
+      <div class="charts">
+        <div class="chart">
+          <canvas id="userActivityChart"></canvas>
+        </div>
+        <div class="chart">
+          <canvas id="roleDistributionChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tabId) {
+      // Hide all tabs
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
+      // Unhide the one we clicked
+      document.getElementById(tabId).classList.remove('hidden');
+    }
+  </script>
+
+  <script src="admin.js"></script>
+</body>
+</html>

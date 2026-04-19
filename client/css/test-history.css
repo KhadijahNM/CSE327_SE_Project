@@ -1,21 +1,17 @@
-/* =========================
-   PAGE BACKGROUND
-   ========================= */
-body{
-  font-family: Arial, sans-serif;
-  background:#f5f7fb;
+.dashboard {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 28px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
-/* =========================
-   MAIN DASHBOARD CONTAINER
-   ========================= */
-.dashboard {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+.history-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 /* =========================
@@ -25,8 +21,8 @@ body{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #ddd;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--border);
 }
 
 .header-actions {
@@ -37,35 +33,18 @@ body{
 
 .title-text {
   margin: 0;
+  font-family: 'Syne', sans-serif;
   font-size: 24px;
   font-weight: bold;
-  color: black;
+  color: var(--text);
 }
 
-/* Buttons for back and menu */
 .icon-btn, .menu-btn {
   background: none;
   border: none;
-  color: black;
+  color: var(--text);
   font-size: 20px;
   cursor: pointer;
-}
-
-.logout-mini-btn {
-  border: 1px solid #d0d7e2;
-  background: #fff;
-  color: #0d47a1;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.logout-mini-btn:hover {
-  border-color: #0d47a1;
-  background: #eef5ff;
 }
 
 /* =========================
@@ -81,7 +60,7 @@ body{
 .subtitle {
   font-size: 24px;
   font-weight: bold;
-  color: black;
+  color: var(--text);
 }
 
 /* Filter section */
@@ -102,18 +81,18 @@ body{
    CHART BOX
    ========================= */
 .chart-box {
-  background: #B0E0E6;
+  background: #dbeafe;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 20px;
 }
 
-.chart-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-  color: #002171;
-}
+  .chart-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e3a8a;
+  }
 
 .chart-subtitle {
   margin: 5px 0 15px;
@@ -134,11 +113,11 @@ body{
 /* Individual stat card */
 .stat-box {
   flex: 1;
-  background: #B0E0E6;
+  background: #e0f2fe;
   margin: 0 10px;
   padding: 15px;
   border-radius: 8px;
-  color: black;
+  color: var(--text);
 
   /* ✅ Center content horizontally & vertically */
   display: flex;              
@@ -185,7 +164,7 @@ body{
 .reports-title{
   font-size:22px;
   font-weight:bold;
-  color:black;
+  color:var(--text);
 }
 
 .view-all{
@@ -205,7 +184,8 @@ body{
 
   background:white;
   border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+  border:1px solid var(--border);
+  box-shadow:0 4px 10px rgba(0,0,0,0.04);
 
   padding:15px;
   margin-bottom:12px;
@@ -220,7 +200,7 @@ body{
 .report-date{
   font-size:15px;
   font-weight:bold;
-  color:black;
+  color:var(--text);
 }
 
 .report-time{
@@ -269,6 +249,21 @@ body{
   font-size:20px;
   font-weight:bold;
   color:#0D47A1;
+}
+
+@media (max-width: 900px) {
+  .dashboard {
+    padding: 20px;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stat-box {
+    margin: 0;
+  }
 }
 
 .risk-label{

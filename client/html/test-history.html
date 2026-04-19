@@ -2,62 +2,115 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<title>OptiGuard AI - Test History</title>
-    <link rel="stylesheet" href="../css/test-history.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptiGuard AI — Test History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/test-history.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<div class="dashboard">
+<aside class="sidebar">
+  <a href="/" class="sidebar-brand">
+    <div class="brand-icon">👁</div>
+    <span class="brand-name">OptiGuard AI</span>
+  </a>
 
-  <!-- TITLE BAR -->
-  <div class="title-bar">
-    <div class="header-actions">
-      <button class="icon-btn" onclick="goBack()">←</button>
-      <h2 class="title-text">Test History</h2>
+  <nav class="sidebar-nav">
+    <span class="nav-label">Main</span>
+    <a href="/dashboard" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="/diagnostics" class="nav-item">
+      <span class="nav-icon">🔬</span> Diagnostics
+    </a>
+    <a href="/test-history" class="nav-item active">
+      <span class="nav-icon">🧪</span> Test History
+    </a>
+    <a href="/donation" class="nav-item">
+      <span class="nav-icon">❤️</span> Donate
+    </a>
+    <span class="nav-label">Account</span>
+    <a href="/settings" class="nav-item">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar" id="sidebarAvatar">U</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarName">User</div>
+        <div class="user-role">Patient</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Logout">↩</button>
     </div>
-    <button class="logout-mini-btn" id="logoutBtn" title="Logout">Logout</button>
   </div>
+</aside>
 
-  <!-- SUBTITLE -->
-  <div class="subtitle-bar">
-    <h3 class="subtitle">Risk Overview</h3>
-  </div>
-
-  <!-- CHART -->
-  <div class="chart-box">
-    <h4 class="chart-title">Monthly Trend</h4>
-    <canvas id="riskChart" height="100"></canvas>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat-box">
-      <h3 id="avgRisk">0%</h3>
-      <p>Avg. Risk</p>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Test History</h1>
+      <p>Review your recent screenings and risk trends.</p>
     </div>
-    <div class="stat-box">
-      <h3 id="totalScans">0</h3>
-      <p>Total Scans</p>
-    </div>
-    <div class="stat-box">
-      <h3 id="trendText">No Data</h3>
-      <p>Trend</p>
+  </header>
+
+  <div class="content history-content">
+    <div class="dashboard">
+
+      <!-- TITLE BAR -->
+      <div class="title-bar">
+        <div class="header-actions">
+          <button class="icon-btn" onclick="goBack()">←</button>
+          <h2 class="title-text">Test History</h2>
+        </div>
+      </div>
+
+      <!-- SUBTITLE -->
+      <div class="subtitle-bar">
+        <h3 class="subtitle">Risk Overview</h3>
+      </div>
+
+      <!-- CHART -->
+      <div class="chart-box">
+        <h4 class="chart-title">Monthly Trend</h4>
+        <canvas id="riskChart" height="100"></canvas>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats">
+        <div class="stat-box">
+          <h3 id="avgRisk">0%</h3>
+          <p>Avg. Risk</p>
+        </div>
+        <div class="stat-box">
+          <h3 id="totalScans">0</h3>
+          <p>Total Scans</p>
+        </div>
+        <div class="stat-box">
+          <h3 id="trendText">No Data</h3>
+          <p>Trend</p>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="reports">
+        <div class="reports-header">
+          <h3>Recent Reports</h3>
+          <a href="#" id="viewAllBtn">View All</a>
+        </div>
+        <div id="reportsContainer"></div>
+      </div>
+
     </div>
   </div>
-
-  <!-- REPORTS -->
-  <div class="reports">
-    <div class="reports-header">
-      <h3>Recent Reports</h3>
-      <a href="#" id="viewAllBtn">View All</a>
-    </div>
-    <div id="reportsContainer"></div>
-  </div>
-
 </div>
+
+<script src="/js/auth.js"></script>
 
 <script>
 
@@ -115,11 +168,6 @@ async function loadReports() {
     alert("❌ Failed to load reports. Check backend server.");
   }
 }
-
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem('optiUser');
-  window.location.href = '/login';
-});
 
 requireSessionUser();
 loadReports();

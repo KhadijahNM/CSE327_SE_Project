@@ -18,12 +18,12 @@
   </a>
   <nav class="sidebar-nav">
     <span class="nav-label">Main</span>
-    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-    <a href="diagnostics.html" class="nav-item"><span class="nav-icon">🔬</span> Diagnostics</a>
-      <a href="test-history.html" class="nav-item"><span class="nav-icon">🧪</span> Test History</a>
-    <a href="donation.html" class="nav-item"><span class="nav-icon">❤️</span> Donate</a>
+    <a href="/dashboard" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="/diagnostics" class="nav-item"><span class="nav-icon">🔬</span> Diagnostics</a>
+      <a href="/test-history" class="nav-item"><span class="nav-icon">🧪</span> Test History</a>
+    <a href="/donation" class="nav-item"><span class="nav-icon">❤️</span> Donate</a>
     <span class="nav-label">Account</span>
-    <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
+    <a href="/settings" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
   </nav>
   <div class="sidebar-footer">
     <div class="user-row">
@@ -161,7 +161,7 @@
               </div>
             </div>
             <div class="card-footer">
-              <span class="card-footer-note">Last updated: just now</span>
+              <span class="card-footer-note" id="profileUpdatedAt">Last updated: not yet saved</span>
               <button class="btn-save" onclick="saveProfile()">Save Changes</button>
             </div>
           </div>
@@ -293,7 +293,7 @@
             </div>
             <div class="card-footer">
               <span class="card-footer-note">Changes save automatically</span>
-              <button class="btn-save" onclick="showToast('Notification preferences saved!', 'success')">Save Preferences</button>
+              <button class="btn-save" type="button">Save Preferences</button>
             </div>
           </div>
         </div>
@@ -387,7 +387,8 @@
 </div>
 
 <script>
-  // ── Toast ──
+  const notificationStorageKey = 'optiNotificationPrefs';
+
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -395,7 +396,6 @@
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  // ── Section navigation ──
   document.querySelectorAll('.settings-nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
@@ -405,62 +405,202 @@
     });
   });
 
-  // ── Load user data ──
-  async function loadUserData() {
-    try {
-      const res = await fetch('/api/me');
-      const user = await res.json();
-      const name = user.name || 'User';
-      const email = user.email || '';
-      const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  function getSessionUser() {
+    const raw = sessionStorage.getItem('optiUser');
+    if (!raw) return null;
 
-      document.getElementById('profileName').textContent = name;
-      document.getElementById('profileEmail').textContent = email || 'No email on file';
-      document.getElementById('avatarInitials').textContent = initials;
-      document.getElementById('sidebarAvatar').textContent = initials;
-      document.getElementById('sidebarName').textContent = name;
-      document.getElementById('fullName').value = name;
-      document.getElementById('displayName').value = name.split(' ')[0];
-      if (email) document.getElementById('emailField').value = email;
-    } catch(e) {
-      console.warn('Could not load user data');
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      console.warn('Invalid session user found in storage.', error);
+      sessionStorage.removeItem('optiUser');
+      return null;
     }
   }
 
-  // ── Load stats ──
+  function requireSessionUser() {
+    const user = getSessionUser();
+    if (!user || !user.email) {
+      window.location.href = '/login';
+      return null;
+    }
+    return user;
+  }
+
+  function getCurrentEmail() {
+    return getSessionUser()?.email || '';
+  }
+
+  function getInitials(name) {
+    return (name || 'User')
+      .split(' ')
+      .filter(Boolean)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'U';
+  }
+
+  function formatLastUpdated(date = new Date()) {
+    return 'Last updated: ' + date.toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function syncSessionUser(user) {
+    if (!user) return;
+
+    const sessionUser = getSessionUser() || {};
+    const mergedUser = {
+      ...sessionUser,
+      ...user,
+      name: user.displayName || user.fullName || user.name || sessionUser.name || 'User',
+      email: user.email || sessionUser.email || ''
+    };
+
+    sessionStorage.setItem('optiUser', JSON.stringify(mergedUser));
+  }
+
+  function applyUserToUI(user) {
+    const fullName = user.fullName || user.name || 'User';
+    const displayName = user.displayName || fullName.split(' ')[0] || fullName;
+    const initials = getInitials(displayName || fullName);
+
+    document.getElementById('profileName').textContent = fullName;
+    document.getElementById('profileEmail').textContent = user.email || 'No email on file';
+    document.getElementById('avatarInitials').textContent = initials;
+    document.getElementById('sidebarAvatar').textContent = initials;
+    document.getElementById('sidebarName').textContent = fullName;
+    document.getElementById('fullName').value = fullName;
+    document.getElementById('displayName').value = displayName;
+    document.getElementById('emailField').value = user.email || '';
+    document.getElementById('phone').value = user.phone || '';
+    document.getElementById('dob').value = user.dob || '';
+    document.getElementById('gender').value = user.gender || '';
+  }
+
+  function updateConnectedAccounts(user) {
+    const provider = user.provider || (typeof user.id === 'string' ? 'google' : 'password');
+    const isGoogleUser = provider === 'google';
+    const hasPassword = provider === 'password';
+
+    document.getElementById('googleStatus').textContent = isGoogleUser ? 'Connected via Google sign-in' : 'Not connected';
+    document.getElementById('googleBadge').textContent = isGoogleUser ? 'Connected' : 'Disconnected';
+    document.getElementById('googleBadge').className = 'connected-badge ' + (isGoogleUser ? 'on' : 'off');
+
+    const passwordRows = document.querySelectorAll('#section-connected .connected-row');
+    const passwordStatus = passwordRows[1]?.querySelector('.connected-status');
+    const passwordBadge = passwordRows[1]?.querySelector('.connected-badge');
+
+    if (passwordStatus) {
+      passwordStatus.textContent = hasPassword ? 'Primary sign-in method' : 'Not available for this account';
+    }
+    if (passwordBadge) {
+      passwordBadge.textContent = hasPassword ? 'Active' : 'Unavailable';
+      passwordBadge.className = 'connected-badge ' + (hasPassword ? 'on' : 'off');
+    }
+  }
+
+  async function loadUserData() {
+    const sessionUser = requireSessionUser();
+    if (!sessionUser) return;
+
+    try {
+      const res = await fetch(`/api/me?email=${encodeURIComponent(sessionUser.email)}`);
+      const data = await res.json();
+      const user = res.ok && data ? data : sessionUser;
+
+      syncSessionUser(user);
+      applyUserToUI(user);
+      updateConnectedAccounts(getSessionUser() || user);
+    } catch (error) {
+      console.warn('Could not load user data from server. Falling back to session.', error);
+      applyUserToUI(sessionUser);
+      updateConnectedAccounts(sessionUser);
+    }
+  }
+
   async function loadStats() {
+    const email = getCurrentEmail();
+    if (!email) return;
+
     try {
       const [scansRes, donRes] = await Promise.all([
-        fetch('/api/scans/recent'),
-        fetch('/api/donations/recent')
+        fetch(`/api/scans/recent?email=${encodeURIComponent(email)}`),
+        fetch(`/api/donations/recent?email=${encodeURIComponent(email)}`)
       ]);
       const scans = await scansRes.json();
       const donations = await donRes.json();
-      document.getElementById('totalScans').textContent = scans.length;
-      document.getElementById('totalDonations').textContent = donations.length;
-    } catch(e) {}
+      document.getElementById('totalScans').textContent = Array.isArray(scans) ? scans.length : 0;
+      document.getElementById('totalDonations').textContent = Array.isArray(donations) ? donations.length : 0;
+    } catch (error) {
+      console.warn('Could not load account summary stats.', error);
+    }
   }
 
-  // ── Save profile ──
-  function saveProfile() {
-    const name = document.getElementById('fullName').value.trim();
-    if (!name) return showToast('Please enter your name.', 'error');
-    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    document.getElementById('profileName').textContent = name;
-    document.getElementById('avatarInitials').textContent = initials;
-    document.getElementById('sidebarAvatar').textContent = initials;
-    document.getElementById('sidebarName').textContent = name;
-    showToast('Profile updated successfully!', 'success');
+  async function saveProfile() {
+    const sessionUser = requireSessionUser();
+    if (!sessionUser) return;
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const displayName = document.getElementById('displayName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const dob = document.getElementById('dob').value;
+    const gender = document.getElementById('gender').value;
+
+    if (!fullName) return showToast('Please enter your name.', 'error');
+
+    const button = document.querySelector('[onclick="saveProfile()"]');
+    button.disabled = true;
+    button.textContent = 'Saving...';
+
+    try {
+      const res = await fetch('/api/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: sessionUser.email,
+          fullName,
+          displayName,
+          phone,
+          dob,
+          gender
+        })
+      });
+
+      const result = await res.json();
+      if (!res.ok || !result.ok) {
+        throw new Error(result.message || 'Could not save profile.');
+      }
+
+      syncSessionUser(result.user);
+      applyUserToUI(result.user);
+      updateConnectedAccounts(getSessionUser() || result.user);
+      document.getElementById('profileUpdatedAt').textContent = formatLastUpdated();
+      showToast(result.message || 'Profile updated successfully!', 'success');
+    } catch (error) {
+      showToast(error.message || 'Could not save profile.', 'error');
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Save Changes';
+    }
   }
 
-  // ── Password toggle ──
   function togglePassword(id, btn) {
     const input = document.getElementById(id);
-    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
-    else { input.type = 'password'; btn.textContent = '👁'; }
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁';
+    }
   }
 
-  // ── Password strength ──
   function checkStrength(val) {
     const fill = document.getElementById('strengthFill');
     const label = document.getElementById('strengthLabel');
@@ -471,11 +611,11 @@
     if (/[^A-Za-z0-9]/.test(val)) score++;
 
     const levels = [
-      { w: '0%',   color: 'var(--border)',   text: 'Enter a password' },
-      { w: '25%',  color: 'var(--danger)',   text: 'Weak' },
-      { w: '50%',  color: 'var(--warning)',  text: 'Fair' },
-      { w: '75%',  color: 'var(--accent)',   text: 'Good' },
-      { w: '100%', color: 'var(--success)',  text: 'Strong 💪' }
+      { w: '0%', color: 'var(--border)', text: 'Enter a password' },
+      { w: '25%', color: 'var(--danger)', text: 'Weak' },
+      { w: '50%', color: 'var(--warning)', text: 'Fair' },
+      { w: '75%', color: 'var(--accent)', text: 'Good' },
+      { w: '100%', color: 'var(--success)', text: 'Strong 💪' }
     ];
 
     const lvl = val.length === 0 ? levels[0] : levels[Math.max(1, score)];
@@ -483,21 +623,27 @@
     fill.style.background = lvl.color;
     label.textContent = lvl.text;
 
-    // Check match
     const confirm = document.getElementById('confirmPassword').value;
     const hint = document.getElementById('matchHint');
     if (confirm) {
       hint.textContent = val === confirm ? '✓ Passwords match' : '✗ Passwords do not match';
       hint.style.color = val === confirm ? 'var(--success)' : 'var(--danger)';
+    } else {
+      hint.textContent = '';
     }
   }
 
-  // ── Change password ──
+  document.getElementById('confirmPassword').addEventListener('input', () => {
+    checkStrength(document.getElementById('newPassword').value);
+  });
+
   async function changePassword() {
+    const email = getCurrentEmail();
     const current = document.getElementById('currentPassword').value;
     const newPw = document.getElementById('newPassword').value;
     const confirm = document.getElementById('confirmPassword').value;
 
+    if (!email) return showToast('Please log in again.', 'error');
     if (!current || !newPw || !confirm) return showToast('Please fill in all password fields.', 'error');
     if (newPw !== confirm) return showToast('New passwords do not match.', 'error');
     if (newPw.length < 8) return showToast('Password must be at least 8 characters.', 'error');
@@ -506,57 +652,132 @@
       const res = await fetch('/api/auth/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentPassword: current, newPassword: newPw })
+        body: JSON.stringify({ email, currentPassword: current, newPassword: newPw })
       });
       const result = await res.json();
-      if (result.ok) {
+
+      if (res.ok && result.ok) {
         showToast('Password updated successfully!', 'success');
         document.getElementById('currentPassword').value = '';
         document.getElementById('newPassword').value = '';
         document.getElementById('confirmPassword').value = '';
         document.getElementById('strengthFill').style.width = '0%';
         document.getElementById('strengthLabel').textContent = 'Enter a password';
+        document.getElementById('matchHint').textContent = '';
       } else {
         showToast(result.message || 'Failed to update password.', 'error');
       }
-    } catch(e) {
+    } catch (error) {
       showToast('Could not connect to server.', 'error');
     }
   }
 
-  // ── Modals ──
-  function openModal(id) { document.getElementById(id).classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
 
   document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+    m.addEventListener('click', e => {
+      if (e.target === m) m.classList.remove('open');
+    });
   });
 
-  // ── Clear history ──
   async function clearHistory() {
+    const email = getCurrentEmail();
     closeModal('clearModal');
+    if (!email) return showToast('Please log in again.', 'error');
+
     try {
-      showToast('Scan history cleared.', 'success');
+      const res = await fetch('/api/scans', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const result = await res.json();
+
+      if (!res.ok || !result.ok) {
+        throw new Error(result.message || 'Could not clear history.');
+      }
+
       document.getElementById('totalScans').textContent = '0';
-    } catch(e) {
-      showToast('Could not clear history.', 'error');
+      showToast(result.deleted ? 'Scan history cleared.' : 'No linked scan history found to clear.', 'success');
+    } catch (error) {
+      showToast(error.message || 'Could not clear history.', 'error');
     }
   }
 
-  // ── Delete account ──
-  function deleteAccount() {
+  async function deleteAccount() {
+    const email = getCurrentEmail();
     closeModal('deleteModal');
-    showToast('Account deletion requested.', 'error');
-    setTimeout(() => window.location.href = '/login', 2000);
+    if (!email) return showToast('Please log in again.', 'error');
+
+    try {
+      const res = await fetch('/api/auth/account', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const result = await res.json();
+
+      if (!res.ok || !result.ok) {
+        throw new Error(result.message || 'Could not delete account.');
+      }
+
+      sessionStorage.removeItem('optiUser');
+      showToast('Account deleted successfully.', 'success');
+      setTimeout(() => window.location.href = '/login', 1200);
+    } catch (error) {
+      showToast(error.message || 'Could not delete account.', 'error');
+    }
   }
 
-  // ── Logout ──
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    showToast('Logged out.');
-    setTimeout(() => window.location.href = '/login', 1000);
+  document.getElementById('logoutBtn').addEventListener('click', event => {
+    event.preventDefault();
+    sessionStorage.removeItem('optiUser');
+    showToast('Logged out.', 'success');
+    setTimeout(() => window.location.href = '/login', 600);
   });
 
-  // ── Init ──
+  function loadNotificationPrefs() {
+    const raw = localStorage.getItem(notificationStorageKey);
+    if (!raw) return;
+
+    try {
+      const prefs = JSON.parse(raw);
+      document.querySelectorAll('#section-notifications .toggle-row').forEach(row => {
+        const key = row.querySelector('h4').textContent;
+        if (Object.prototype.hasOwnProperty.call(prefs, key)) {
+          row.querySelector('input[type="checkbox"]').checked = !!prefs[key];
+        }
+      });
+    } catch (error) {
+      console.warn('Could not parse saved notification preferences.', error);
+    }
+  }
+
+  function saveNotificationPrefs() {
+    const prefs = {};
+    document.querySelectorAll('#section-notifications .toggle-row').forEach(row => {
+      const key = row.querySelector('h4').textContent;
+      prefs[key] = row.querySelector('input[type="checkbox"]').checked;
+    });
+
+    localStorage.setItem(notificationStorageKey, JSON.stringify(prefs));
+    showToast('Notification preferences saved!', 'success');
+  }
+
+  document.querySelector('#section-notifications .btn-save').addEventListener('click', saveNotificationPrefs);
+  document.querySelector('.avatar-edit').addEventListener('click', () => {
+    showToast('Profile photo upload is not available yet.', '');
+  });
+
+  document.getElementById('profileUpdatedAt').textContent = formatLastUpdated();
+  requireSessionUser();
+  loadNotificationPrefs();
   loadUserData();
   loadStats();
 </script>

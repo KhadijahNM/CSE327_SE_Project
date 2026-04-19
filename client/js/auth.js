@@ -5,8 +5,15 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // Get user from session
-  const raw  = sessionStorage.getItem('optiUser');
-  const user = raw ? JSON.parse(raw) : null;
+  const raw = sessionStorage.getItem('optiUser');
+  let user = null;
+
+  try {
+    user = raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    console.warn('Invalid saved session. Clearing auth state.', error);
+    sessionStorage.removeItem('optiUser');
+  }
 
   // If not logged in, redirect to login
   if (!user) {

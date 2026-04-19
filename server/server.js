@@ -62,21 +62,108 @@ app.get("/test-history", (req, res) => res.sendFile(path.join(__dirname, "../cli
 
 // ── Health check ──
 app.get("/api/health", (req, res) => res.json({ ok: true }));
-app.get("/api/me", (req, res) => res.json({ name: "Demo User" }));
+
+function normalizeEmail(value) {
+  return value ? String(value).trim().toLowerCase() : "";
+}
+
+function cleanText(value) {
+  if (value === undefined || value === null) return null;
+  const trimmed = String(value).trim();
+  return trimmed || null;
+}
+
+function cleanDate(value) {
+  const trimmed = cleanText(value);
+  if (!trimmed) return null;
+  return /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed : null;
+}
+
+function serializeUser(user) {
+  if (!user) return null;
+  const fullName = user.fullname || "";
+  const displayName = user.display_name || (fullName ? fullName.split(" ")[0] : "");
+
+  return {
+    id: user.id,
+    name: displayName || fullName || user.email,
+    fullName,
+    displayName,
+    email: user.email,
+    phone: user.phone || "",
+    dob: user.dob ? new Date(user.dob).toISOString().slice(0, 10) : "",
+    gender: user.gender || ""
+  };
+}
+
+async function findUserByEmail(email) {
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail) return null;
+
+  const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [normalizedEmail]);
+  return rows[0] || null;
+}
+
+app.get("/api/me", async (req, res) => {
+  const email = normalizeEmail(req.query.email);
+  if (!email) return res.json({ name: "Demo User" });
+
+  try {
+    const user = await findUserByEmail(email);
+    if (!user) return res.status(404).json({ ok: false, message: "User not found." });
+    res.json({ ok: true, ...serializeUser(user) });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: "Server error.", error: err.message });
+  }
+});
+
+app.put("/api/me", async (req, res) => {
+  const email = normalizeEmail(req.body?.email);
+  const fullName = cleanText(req.body?.fullName);
+  const displayName = cleanText(req.body?.displayName);
+  const phone = cleanText(req.body?.phone);
+  const dob = cleanDate(req.body?.dob);
+  const gender = cleanText(req.body?.gender);
+
+  if (!email) return res.status(400).json({ ok: false, message: "Email is required." });
+  if (!fullName) return res.status(400).json({ ok: false, message: "Full name is required." });
+
+  try {
+    const existingUser = await findUserByEmail(email);
+
+    if (existingUser) {
+      await db.query(
+        "UPDATE users SET fullname = ?, display_name = ?, phone = ?, dob = ?, gender = ? WHERE email = ?",
+        [fullName, displayName, phone, dob, gender, email]
+      );
+    } else {
+      await db.query(
+        "INSERT INTO users (fullname, display_name, email, phone, dob, gender) VALUES (?, ?, ?, ?, ?, ?)",
+        [fullName, displayName, email, phone, dob, gender]
+      );
+    }
+
+    const savedUser = await findUserByEmail(email);
+    res.json({ ok: true, message: "Profile updated successfully.", user: serializeUser(savedUser) });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: "Server error.", error: err.message });
+  }
+});
 
 /* ================== AUTH ================== */
 
 // Signup
 app.post("/signup", async (req, res) => {
   const { fullname, email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ ok: false, message: "Email and password required." });
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail || !password) return res.status(400).json({ ok: false, message: "Email and password required." });
 
   try {
-    const [existing] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
+    const [existing] = await db.query("SELECT id FROM users WHERE email = ?", [normalizedEmail]);
     if (existing.length > 0) return res.status(400).json({ ok: false, message: "Email already registered." });
 
     const hashed = await bcrypt.hash(password, 10);
-    await db.query("INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)", [fullname || "", email, hashed]);
+    await db.query("INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)", [fullname || "", normalizedEmail, hashed]);
     res.json({ ok: true, message: "Account created successfully! Please log in." });
   } catch (err) {
     console.error("Signup error:", err.message);
@@ -87,17 +174,18 @@ app.post("/signup", async (req, res) => {
 // Login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ ok: false, message: "Email and password required." });
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail || !password) return res.status(400).json({ ok: false, message: "Email and password required." });
 
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [normalizedEmail]);
     if (!rows.length) return res.status(401).json({ ok: false, message: "Invalid email or password." });
 
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ ok: false, message: "Invalid email or password." });
 
-    res.json({ ok: true, message: `Welcome back, ${user.fullname || user.email}!`, user: { id: user.id, name: user.fullname, email: user.email } });
+    res.json({ ok: true, message: `Welcome back, ${user.fullname || user.email}!`, user: serializeUser(user) });
   } catch (err) {
     console.error("Login error:", err.message);
     res.status(500).json({ ok: false, message: "Server error.", error: err.message });
@@ -107,19 +195,39 @@ app.post("/login", async (req, res) => {
 // Change password
 app.post("/api/auth/change-password", async (req, res) => {
   const { email, currentPassword, newPassword } = req.body || {};
-  if (!email || !currentPassword || !newPassword) return res.status(400).json({ ok: false, message: "All fields required." });
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail || !currentPassword || !newPassword) return res.status(400).json({ ok: false, message: "All fields required." });
 
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [normalizedEmail]);
     if (!rows.length) return res.status(404).json({ ok: false, message: "User not found." });
 
     const user = rows[0];
+    if (!user.password) return res.status(400).json({ ok: false, message: "This account uses a social sign-in method and cannot change password here." });
     const match = await bcrypt.compare(currentPassword, user.password);
     if (!match) return res.status(401).json({ ok: false, message: "Current password is incorrect." });
 
     const hashed = await bcrypt.hash(newPassword, 10);
-    await db.query("UPDATE users SET password = ? WHERE email = ?", [hashed, email]);
+    await db.query("UPDATE users SET password = ? WHERE email = ?", [hashed, normalizedEmail]);
     res.json({ ok: true, message: "Password updated successfully." });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: "Server error.", error: err.message });
+  }
+});
+
+app.delete("/api/auth/account", async (req, res) => {
+  const normalizedEmail = normalizeEmail(req.body?.email);
+  if (!normalizedEmail) return res.status(400).json({ ok: false, message: "Email is required." });
+
+  try {
+    const user = await findUserByEmail(normalizedEmail);
+    if (!user) return res.status(404).json({ ok: false, message: "User not found." });
+
+    await db.query("DELETE FROM reports WHERE user_id = ?", [user.id]);
+    await db.query("DELETE FROM donations WHERE user_id = ?", [user.id]);
+    await db.query("DELETE FROM users WHERE id = ?", [user.id]);
+
+    res.json({ ok: true, message: "Account deleted successfully." });
   } catch (err) {
     res.status(500).json({ ok: false, message: "Server error.", error: err.message });
   }
@@ -129,9 +237,21 @@ app.post("/api/auth/change-password", async (req, res) => {
 
 app.get("/api/scans/latest", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT disease, risk_score, risk_label, created_at FROM reports ORDER BY created_at DESC LIMIT 1"
-    );
+    const email = normalizeEmail(req.query.email);
+    let rows;
+
+    if (email) {
+      const user = await findUserByEmail(email);
+      if (!user) return res.json(null);
+      [rows] = await db.query(
+        "SELECT disease, risk_score, risk_label, created_at FROM reports WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+        [user.id]
+      );
+    } else {
+      [rows] = await db.query(
+        "SELECT disease, risk_score, risk_label, created_at FROM reports ORDER BY created_at DESC LIMIT 1"
+      );
+    }
     res.json(rows[0] || null);
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
@@ -140,12 +260,39 @@ app.get("/api/scans/latest", async (req, res) => {
 
 app.get("/api/scans/recent", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT disease, risk_score, risk_label, created_at FROM reports ORDER BY created_at DESC LIMIT 10"
-    );
+    const email = normalizeEmail(req.query.email);
+    let rows;
+
+    if (email) {
+      const user = await findUserByEmail(email);
+      if (!user) return res.json([]);
+      [rows] = await db.query(
+        "SELECT disease, risk_score, risk_label, created_at FROM reports WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
+        [user.id]
+      );
+    } else {
+      [rows] = await db.query(
+        "SELECT disease, risk_score, risk_label, created_at FROM reports ORDER BY created_at DESC LIMIT 10"
+      );
+    }
     res.json(rows);
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.delete("/api/scans", async (req, res) => {
+  const email = normalizeEmail(req.body?.email);
+  if (!email) return res.status(400).json({ ok: false, message: "Email is required." });
+
+  try {
+    const user = await findUserByEmail(email);
+    if (!user) return res.status(404).json({ ok: false, message: "User not found." });
+
+    const [result] = await db.query("DELETE FROM reports WHERE user_id = ?", [user.id]);
+    res.json({ ok: true, deleted: result.affectedRows });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: "Server error.", error: err.message });
   }
 });
 
@@ -225,12 +372,15 @@ function parseClassification(result, diseaseName) {
 // Upload + scan
 app.post("/api/scans/upload", upload.single("image"), async (req, res) => {
   const test = (req.query.test || "dr").toLowerCase();
+  const email = normalizeEmail(req.headers["x-user-email"]);
   if (!req.file) return res.status(400).json({ ok: false, error: "No file uploaded" });
 
   const diseaseNames = { dr: "Diabetic Retinopathy", glaucoma: "Glaucoma", cataract: "Cataract", dryeye: "Dry Eye" };
   const workflowId = WORKFLOWS[test];
+  let currentUser = null;
 
   try {
+    currentUser = email ? await findUserByEmail(email) : null;
     console.log(`Running Roboflow [${test}] → workflow: ${workflowId}`);
     const roboflowResult = await callRoboflow(workflowId, req.file.path);
     console.log(`Roboflow [${test}] result:`, JSON.stringify(roboflowResult, null, 2));
@@ -239,8 +389,8 @@ app.post("/api/scans/upload", upload.single("image"), async (req, res) => {
     const pred = { disease: diseaseNames[test], ...parsed };
 
     await db.query(
-      "INSERT INTO reports (disease, risk_score, risk_label) VALUES (?, ?, ?)",
-      [pred.disease, pred.risk_score, pred.risk_label]
+      "INSERT INTO reports (user_id, disease, risk_score, risk_label) VALUES (?, ?, ?, ?)",
+      [currentUser?.id || null, pred.disease, pred.risk_score, pred.risk_label]
     );
 
     fs.unlink(req.file.path, () => {});
@@ -260,8 +410,8 @@ app.post("/api/scans/upload", upload.single("image"), async (req, res) => {
 
     try {
       await db.query(
-        "INSERT INTO reports (disease, risk_score, risk_label) VALUES (?, ?, ?)",
-        [fallback.disease, fallback.risk_score, fallback.risk_label]
+        "INSERT INTO reports (user_id, disease, risk_score, risk_label) VALUES (?, ?, ?, ?)",
+        [currentUser?.id || null, fallback.disease, fallback.risk_score, fallback.risk_label]
       );
     } catch (dbErr) { console.error("DB fallback error:", dbErr.message); }
 
@@ -273,12 +423,14 @@ app.post("/api/scans/upload", upload.single("image"), async (req, res) => {
 
 app.post("/api/donations", async (req, res) => {
   const { amount, currency } = req.body || {};
+  const email = normalizeEmail(req.headers["x-user-email"]);
   if (!amount) return res.status(400).json({ ok: false, error: "Amount required" });
 
   try {
+    const user = email ? await findUserByEmail(email) : null;
     const [result] = await db.query(
-      "INSERT INTO donations (amount, currency) VALUES (?, ?)",
-      [amount, currency || "BDT"]
+      "INSERT INTO donations (user_id, amount, currency) VALUES (?, ?, ?)",
+      [user?.id || null, amount, currency || "BDT"]
     );
     res.json({ ok: true, id: result.insertId });
   } catch (err) {
@@ -288,9 +440,21 @@ app.post("/api/donations", async (req, res) => {
 
 app.get("/api/donations/recent", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT amount, currency, created_at FROM donations ORDER BY created_at DESC LIMIT 10"
-    );
+    const email = normalizeEmail(req.query.email);
+    let rows;
+
+    if (email) {
+      const user = await findUserByEmail(email);
+      if (!user) return res.json([]);
+      [rows] = await db.query(
+        "SELECT amount, currency, created_at FROM donations WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
+        [user.id]
+      );
+    } else {
+      [rows] = await db.query(
+        "SELECT amount, currency, created_at FROM donations ORDER BY created_at DESC LIMIT 10"
+      );
+    }
     res.json(rows);
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });

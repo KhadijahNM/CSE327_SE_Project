@@ -38,11 +38,25 @@ const initSQL = `
 // Run each statement separately
 const statements = initSQL.split(";").map(s => s.trim()).filter(s => s.length > 0);
 
+const extraColumns = [
+  "ALTER TABLE users ADD COLUMN display_name VARCHAR(255) NULL",
+  "ALTER TABLE users ADD COLUMN phone VARCHAR(50) NULL",
+  "ALTER TABLE users ADD COLUMN dob DATE NULL",
+  "ALTER TABLE users ADD COLUMN gender VARCHAR(50) NULL"
+];
+
 (async () => {
   try {
     const conn = await db.promise().getConnection();
     for (const stmt of statements) {
       await conn.query(stmt);
+    }
+    for (const stmt of extraColumns) {
+      try {
+        await conn.query(stmt);
+      } catch (err) {
+        if (err.code !== "ER_DUP_FIELDNAME") throw err;
+      }
     }
     conn.release();
     console.log("MySQL connected & tables ready ✓");

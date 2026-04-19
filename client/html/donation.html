@@ -165,6 +165,14 @@
   const donateBtn = document.getElementById('donateBtn');
   const quickBtns = document.querySelectorAll('.quick-btn');
 
+  function getCurrentEmail() {
+    try {
+      return JSON.parse(sessionStorage.getItem('optiUser') || 'null')?.email || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
   // ── Toast ──
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -205,7 +213,10 @@
     try {
       const res = await fetch('/api/donations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(getCurrentEmail() ? { 'x-user-email': getCurrentEmail() } : {})
+        },
         body: JSON.stringify({ amount, currency: 'BDT' })
       });
       const result = await res.json();
@@ -232,7 +243,9 @@
   // ── Load recent donations ──
   async function loadRecent() {
     try {
-      const res = await fetch('/api/donations/recent');
+      const email = getCurrentEmail();
+      const url = email ? `/api/donations/recent?email=${encodeURIComponent(email)}` : '/api/donations/recent';
+      const res = await fetch(url);
       const rows = await res.json();
       if (!rows.length) return;
 

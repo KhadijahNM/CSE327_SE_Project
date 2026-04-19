@@ -139,6 +139,12 @@
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      saveOptiUser({
+        id: user.uid,
+        name: user.displayName || user.email || 'User',
+        email: user.email || '',
+        provider: 'google'
+      });
       showToast(`Welcome, ${user.displayName}! ✓`, 'success');
       setTimeout(() => window.location.href = '/dashboard', 1200);
     } catch (err) {
@@ -157,6 +163,11 @@
 
 <script>
   let isSignup = true;
+
+  function saveOptiUser(user) {
+    if (!user) return;
+    sessionStorage.setItem('optiUser', JSON.stringify(user));
+  }
 
   function showSignup() {
     isSignup = true;
@@ -209,9 +220,10 @@
 
       const result = await response.json();
 
-      if (result.error) {
+      if (!response.ok || result.ok === false || result.error) {
         showToast(result.message || 'Something went wrong.', 'error');
       } else {
+        saveOptiUser({ ...result.user, provider: 'password' });
         showToast(result.message || 'Success!', 'success');
         if (!isSignup) setTimeout(() => window.location.href = '/dashboard', 1200);
       }

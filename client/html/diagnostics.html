@@ -160,6 +160,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  function getCurrentEmail() {
+    try {
+      return JSON.parse(sessionStorage.getItem('optiUser') || 'null')?.email || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
   // ── Toast ──
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -229,7 +237,11 @@
     formData.append('image', file);
 
     try {
-      const res = await fetch(`/api/scans/upload?test=${test}`, { method: 'POST', body: formData });
+      const res = await fetch(`/api/scans/upload?test=${test}`, {
+        method: 'POST',
+        headers: getCurrentEmail() ? { 'x-user-email': getCurrentEmail() } : {},
+        body: formData
+      });
       const result = await res.json();
 
       if (!result.ok) throw new Error(result.error);

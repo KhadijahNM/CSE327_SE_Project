@@ -14,8 +14,11 @@
 
   <!-- TITLE BAR -->
   <div class="title-bar">
-    <button class="icon-btn" onclick="goBack()">←</button>
-    <h2 class="title-text">Test History</h2>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="goBack()">←</button>
+      <h2 class="title-text">Test History</h2>
+    </div>
+    <button class="logout-mini-btn" id="logoutBtn" title="Logout">Logout</button>
   </div>
 
   <!-- SUBTITLE -->
@@ -58,6 +61,24 @@
 
 <script>
 
+function getSessionUser() {
+  try {
+    return JSON.parse(sessionStorage.getItem('optiUser') || 'null');
+  } catch (error) {
+    sessionStorage.removeItem('optiUser');
+    return null;
+  }
+}
+
+function requireSessionUser() {
+  const user = getSessionUser();
+  if (!user || !user.email) {
+    window.location.href = '/login';
+    return null;
+  }
+  return user;
+}
+
 function goBack(){
   window.history.back();
 }
@@ -66,8 +87,11 @@ let allReports = [];
 
 /* ================= FETCH DATA ================= */
 async function loadReports() {
+  const user = requireSessionUser();
+  if (!user) return;
+
   try {
-    const res = await fetch("/api/scans/recent");
+    const res = await fetch(`/api/scans/recent?email=${encodeURIComponent(user.email)}`);
 
     if (!res.ok) throw new Error("Server error");
 
@@ -92,6 +116,12 @@ async function loadReports() {
   }
 }
 
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('optiUser');
+  window.location.href = '/login';
+});
+
+requireSessionUser();
 loadReports();
 
 /* ================= STATS ================= */

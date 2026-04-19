@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+const bcrypt = require("bcrypt");
 
 const db = mysql.createPool({
   uri: "mysql://root:uhrZHmxuMqoCwvCfCfYAQMYWZTDllUkw@roundhouse.proxy.rlwy.net:14486/railway",
@@ -42,8 +43,14 @@ const extraColumns = [
   "ALTER TABLE users ADD COLUMN display_name VARCHAR(255) NULL",
   "ALTER TABLE users ADD COLUMN phone VARCHAR(50) NULL",
   "ALTER TABLE users ADD COLUMN dob DATE NULL",
-  "ALTER TABLE users ADD COLUMN gender VARCHAR(50) NULL"
+  "ALTER TABLE users ADD COLUMN gender VARCHAR(50) NULL",
+  "ALTER TABLE users ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'user'",
+  "ALTER TABLE users ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'active'"
 ];
+
+const DEFAULT_ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "admin@optiguard.ai").trim().toLowerCase();
+const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Admin123!";
+const DEFAULT_ADMIN_NAME = process.env.ADMIN_NAME || "OptiGuard Admin";
 
 (async () => {
   try {
@@ -58,6 +65,22 @@ const extraColumns = [
         if (err.code !== "ER_DUP_FIELDNAME") throw err;
       }
     }
+
+    const [adminRows] = await conn.query("SELECT id FROM users WHERE email = ?", [DEFAULT_ADMIN_EMAIL]);
+    if (adminRows.length === 0) {
+      const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10);
+      await conn.query(
+        "INSERT INTO users (fullname, display_name, email, password, role, status) VALUES (?, ?, ?, ?, 'admin', 'active')",
+        [DEFAULT_ADMIN_NAME, "Admin", DEFAULT_ADMIN_EMAIL, hashedPassword]
+      );
+      console.log(`Default admin created for ${DEFAULT_ADMIN_EMAIL}`);
+    } else {
+      await conn.query(
+        "UPDATE users SET role = 'admin', status = COALESCE(status, 'active') WHERE email = ?",
+        [DEFAULT_ADMIN_EMAIL]
+      );
+    }
+
     conn.release();
     console.log("MySQL connected & tables ready ✓");
   } catch (err) {

@@ -68,6 +68,7 @@
     <div class="tabs">
       <button class="tab-btn active" onclick="showSignup()">Sign up</button>
       <button class="tab-btn" onclick="showLogin()">Log in</button>
+      <button class="tab-btn" onclick="showAdminLogin()">Admin</button>
     </div>
 
     <!-- Name field (signup only) -->
@@ -162,31 +163,59 @@
 </script>
 
 <script>
-  let isSignup = true;
+  let authMode = 'signup';
 
   function saveOptiUser(user) {
     if (!user) return;
+    sessionStorage.removeItem('optiAdmin');
     sessionStorage.setItem('optiUser', JSON.stringify(user));
   }
 
+  function saveOptiAdmin(user) {
+    if (!user) return;
+    sessionStorage.removeItem('optiUser');
+    sessionStorage.setItem('optiAdmin', JSON.stringify(user));
+  }
+
+  function setActiveTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, buttonIndex) => {
+      btn.classList.toggle('active', buttonIndex === index);
+    });
+  }
+
+  function toggleSocialLogin(show) {
+    document.querySelector('.divider').classList.toggle('hidden', !show);
+    document.querySelector('.social-row').classList.toggle('hidden', !show);
+  }
+
   function showSignup() {
-    isSignup = true;
+    authMode = 'signup';
     document.getElementById('nameField').classList.remove('hidden');
     document.getElementById('mainActionBtn').innerText = 'Create Account';
     document.getElementById('formTitle').innerText = 'Create account';
     document.getElementById('formSubtitle').innerText = 'Start your free eye health journey today.';
-    document.querySelectorAll('.tab-btn')[0].classList.add('active');
-    document.querySelectorAll('.tab-btn')[1].classList.remove('active');
+    setActiveTab(0);
+    toggleSocialLogin(true);
   }
 
   function showLogin() {
-    isSignup = false;
+    authMode = 'login';
     document.getElementById('nameField').classList.add('hidden');
     document.getElementById('mainActionBtn').innerText = 'Log In';
     document.getElementById('formTitle').innerText = 'Welcome back';
     document.getElementById('formSubtitle').innerText = 'Log in to view your eye health dashboard.';
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+    setActiveTab(1);
+    toggleSocialLogin(true);
+  }
+
+  function showAdminLogin() {
+    authMode = 'admin';
+    document.getElementById('nameField').classList.add('hidden');
+    document.getElementById('mainActionBtn').innerText = 'Admin Log In';
+    document.getElementById('formTitle').innerText = 'Admin access';
+    document.getElementById('formSubtitle').innerText = 'Log in to manage platform users and activity.';
+    setActiveTab(2);
+    toggleSocialLogin(false);
   }
 
   function showToast(msg, type = '') {
@@ -209,8 +238,11 @@
     btn.disabled = true;
 
     try {
-      const url = isSignup ? 'http://127.0.0.1:3000/signup' : 'http://127.0.0.1:3000/login';
-      const data = isSignup ? { fullname, email, password } : { email, password };
+      const url =
+        authMode === 'signup' ? 'http://127.0.0.1:3000/signup' :
+        authMode === 'admin' ? 'http://127.0.0.1:3000/admin/login' :
+        'http://127.0.0.1:3000/login';
+      const data = authMode === 'signup' ? { fullname, email, password } : { email, password };
 
       const response = await fetch(url, {
         method: 'POST',
@@ -223,14 +255,23 @@
       if (!response.ok || result.ok === false || result.error) {
         showToast(result.message || 'Something went wrong.', 'error');
       } else {
-        saveOptiUser({ ...result.user, provider: 'password' });
-        showToast(result.message || 'Success!', 'success');
-        if (!isSignup) setTimeout(() => window.location.href = '/dashboard', 1200);
+        if (authMode === 'admin') {
+          saveOptiAdmin({ ...result.user, provider: 'admin' });
+          showToast(result.message || 'Success!', 'success');
+          setTimeout(() => window.location.href = '/admin', 800);
+        } else {
+          saveOptiUser({ ...result.user, provider: 'password' });
+          showToast(result.message || 'Success!', 'success');
+          if (authMode === 'login') setTimeout(() => window.location.href = '/dashboard', 1200);
+        }
       }
     } catch (err) {
       showToast('Cannot connect to server.', 'error');
     } finally {
-      btn.textContent = isSignup ? 'Create Account' : 'Log In';
+      btn.textContent =
+        authMode === 'signup' ? 'Create Account' :
+        authMode === 'admin' ? 'Admin Log In' :
+        'Log In';
       btn.disabled = false;
     }
   }

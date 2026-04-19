@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptiGuard AI — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">Admin</p>
+      <h1>OptiGuard Console</h1>
+      <p class="sidebar-copy">Manage user accounts and review platform usage from the same hosted database.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-tab="usersTab">Users</button>
+      <button class="nav-btn" data-tab="reportsTab">Reports</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-meta">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div>
+          <div class="admin-name" id="adminName">Admin</div>
+          <div class="admin-email" id="adminEmail">admin@optiguard.ai</div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2>Admin Dashboard</h2>
+        <p>View and manage registered users in the live hosted database.</p>
+      </div>
+      <button class="primary-btn" id="addUserBtn">+ Add User</button>
+    </header>
+
+    <section id="usersTab" class="tab active">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>User Directory</h3>
+            <p>Search, filter, edit, and remove users.</p>
+          </div>
+          <div class="filters">
+            <input type="search" id="searchInput" placeholder="Search by name or email">
+            <select id="roleFilter">
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <select id="statusFilter">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table id="userTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="reportsTab" class="tab">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Usage Reports</h3>
+            <p>User growth and report activity across the live app.</p>
+          </div>
+        </div>
+
+        <div class="charts">
+          <div class="chart-card">
+            <h4>User Signups</h4>
+            <canvas id="userActivityChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4>Role Distribution</h4>
+            <canvas id="roleDistributionChart"></canvas>
+          </div>
+          <div class="chart-card full-width">
+            <h4>Report Volume</h4>
+            <canvas id="reportActivityChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="user-dialog" id="userDialog">
+    <form method="dialog" id="userForm">
+      <div class="dialog-head">
+        <h3 id="dialogTitle">Add User</h3>
+        <button type="button" class="ghost-btn" id="closeDialogBtn">Close</button>
+      </div>
+
+      <input type="hidden" id="userId">
+
+      <label>
+        Full Name
+        <input type="text" id="userFullName" required>
+      </label>
+
+      <label>
+        Display Name
+        <input type="text" id="userDisplayName">
+      </label>
+
+      <label>
+        Email
+        <input type="email" id="userEmail" required>
+      </label>
+
+      <label id="passwordField">
+        Temporary Password
+        <input type="text" id="userPassword" placeholder="ChangeMe123!">
+      </label>
+
+      <div class="dialog-grid">
+        <label>
+          Role
+          <select id="userRole">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+
+        <label>
+          Status
+          <select id="userStatus">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="ghost-btn" id="cancelDialogBtn">Cancel</button>
+        <button type="submit" class="primary-btn" id="saveUserBtn">Save User</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

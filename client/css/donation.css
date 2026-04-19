@@ -4,7 +4,13 @@
 
 body { display: flex; }
 
-.content { padding: 32px 36px; flex: 1; max-width: 900px; }
+.content {
+  padding: 32px 36px;
+  flex: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
 
 /* Impact banner */
 .impact-banner {
@@ -14,18 +20,47 @@ body { display: flex; }
   justify-content: space-between; margin-bottom: 24px;
   position: relative; overflow: hidden;
   animation: fadeUp 0.4s ease both;
+  min-height: 220px;
 }
 .impact-banner::before { content: ''; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,0.06); }
 .impact-banner::after { content: ''; position: absolute; bottom: -40px; right: 160px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.04); }
 .impact-text h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
-.impact-text p { font-size: 0.85rem; opacity: 0.8; max-width: 420px; line-height: 1.55; }
-.impact-stats { display: flex; gap: 28px; position: relative; z-index: 1; }
+.impact-text { max-width: 640px; position: relative; z-index: 1; }
+.impact-text p { font-size: 0.95rem; opacity: 0.86; max-width: 560px; line-height: 1.7; }
+.impact-stats { display: flex; gap: 28px; position: relative; z-index: 1; flex-wrap: wrap; justify-content: flex-end; }
 .impact-stat { text-align: center; }
-.impact-stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
-.impact-stat-label { font-size: 0.72rem; opacity: 0.75; margin-top: 2px; }
+.impact-stat {
+  min-width: 130px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(6px);
+}
+.impact-stat-num { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; }
+.impact-stat-label { font-size: 0.78rem; opacity: 0.82; margin-top: 4px; }
 
 /* Main grid */
-.main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+.main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.main-grid > .card,
+.main-grid > div {
+  min-width: 0;
+}
+
+.main-grid > .card {
+  padding: 28px;
+}
+
+.main-grid > div {
+  display: grid;
+  gap: 24px;
+}
 
 /* Amount input */
 .amount-label { font-size: 0.78rem; font-weight: 500; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 8px; display: block; }
@@ -62,7 +97,7 @@ body { display: flex; }
 .impact-item-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
 
 /* Recent donations */
-.recent-card { margin-top: 20px; animation-delay: 0.2s; }
+.recent-card { margin-top: 0; animation-delay: 0.2s; }
 .donation-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); animation: fadeUp 0.3s ease both; }
 .donation-row:last-child { border-bottom: none; }
 .donation-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 600; flex-shrink: 0; }
@@ -74,6 +109,7 @@ body { display: flex; }
 @media (max-width: 900px) {
   .main-grid { grid-template-columns: 1fr; }
   .impact-banner { flex-direction: column; gap: 20px; align-items: flex-start; }
+  .impact-stats { justify-content: flex-start; width: 100%; }
 }
 @media (max-width: 768px) {
   .content { padding: 20px 16px; }

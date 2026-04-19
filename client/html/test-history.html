@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>OptiGuard AI - Test History</title>
+    <link rel="stylesheet" href="../css/test-history.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+  <!-- TITLE BAR -->
+  <div class="title-bar">
+    <button class="icon-btn" onclick="goBack()">←</button>
+    <h2 class="title-text">Test History</h2>
+  </div>
+
+  <!-- SUBTITLE -->
+  <div class="subtitle-bar">
+    <h3 class="subtitle">Risk Overview</h3>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-box">
+    <h4 class="chart-title">Monthly Trend</h4>
+    <canvas id="riskChart" height="100"></canvas>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-box">
+      <h3 id="avgRisk">0%</h3>
+      <p>Avg. Risk</p>
+    </div>
+    <div class="stat-box">
+      <h3 id="totalScans">0</h3>
+      <p>Total Scans</p>
+    </div>
+    <div class="stat-box">
+      <h3 id="trendText">No Data</h3>
+      <p>Trend</p>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="reports">
+    <div class="reports-header">
+      <h3>Recent Reports</h3>
+      <a href="#" id="viewAllBtn">View All</a>
+    </div>
+    <div id="reportsContainer"></div>
+  </div>
+
+</div>
+
+<script>
+
+function goBack(){
+  window.history.back();
+}
+
+let allReports = [];
+
+/* ================= FETCH DATA ================= */
+async function loadReports() {
+  try {
+    const res = await fetch("/api/scans/recent");
+
+    if (!res.ok) throw new Error("Server error");
+
+    const data = await res.json();
+
+    // Map API fields to expected format
+    allReports = (data || []).map(r => ({
+      date: r.created_at || new Date().toISOString(),
+      time: r.created_at ? new Date(r.created_at).toLocaleTimeString() : "",
+      risk: r.risk_score || 0,
+      status: r.risk_label || "Low",
+      disease: r.disease || ""
+    }));
+
+    updateStats(allReports);
+    createChart(allReports);
+    showReports(allReports.slice(0, 3));
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Failed to load reports. Check backend server.");
+  }
+}
+
+loadReports();
+
+/* ================= STATS ================= */
+function updateStats(data){
+  if (!data.length) return;
+
+  const totalScans = data.length;
+  const totalRisk = data.reduce((sum,r)=>sum+(r.risk || 0),0);
+  const avgRisk = (totalRisk / totalScans).toFixed(1);
+
+  document.getElementById("avgRisk").innerText = avgRisk + "%";
+  document.getElementById("totalScans").innerText = totalScans;
+
+  let trend = "No Data";
+
+  if(data.length >= 2){
+    const last = data[data.length-1].risk || 0;
+    const prev = data[data.length-2].risk || 0;
+
+    if(last > prev) trend = "↑ Increasing";
+    else if(last < prev) trend = "↓ Decreasing";
+    else trend = "→ Stable";
+  }
+
+  document.getElementById("trendText").innerText = trend;
+}
+
+/* ================= CHART ================= */
+function createChart(data){
+
+  if(!data.length) return;
+
+  const labels = data.map(r => r.date ? new Date(r.date).toLocaleDateString() : "");
+  const risks = data.map(r => r.risk || 0);
+
+  new Chart(document.getElementById("riskChart"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: risks
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+/* ================= REPORTS ================= */
+function showReports(reports){
+  const container = document.getElementById("reportsContainer");
+  container.innerHTML = "";
+
+  reports.forEach(report => {
+
+    const status = (report.status || "low").toLowerCase();
+
+    let statusClass = "status-low";
+    if(status === "medium") statusClass = "status-medium";
+    if(status === "high") statusClass = "status-high";
+
+    const card = document.createElement("div");
+    card.className = "report-item";
+
+    card.innerHTML = `
+      <div>
+        <strong>${new Date(report.date).toDateString()}</strong><br>
+        ${report.time || ""}
+        <br>
+        <span class="${statusClass}">${status}</span>
+      </div>
+
+      <div>
+        <strong>${report.risk || 0}%</strong>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/* ================= VIEW ALL ================= */
+document.getElementById("viewAllBtn").onclick = function(e){
+  e.preventDefault();
+  showReports(allReports);
+  this.style.display = "none";
+};
+
+</script>
+
+</body>
+</html>

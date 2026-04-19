@@ -19,18 +19,20 @@
 
   <nav class="sidebar-nav">
     <span class="nav-label">Main</span>
-    <a href="dashboard.html" class="nav-item active">
+    <a href="/dashboard" class="nav-item active">
       <span class="nav-icon">📊</span> Dashboard
     </a>
-    <a href="diagnostics.html" class="nav-item">
+    <a href="/diagnostics" class="nav-item">
       <span class="nav-icon">🔬</span> Diagnostics
     </a>
-    <a href="donation.html" class="nav-item">
+    <a href="/test-history" class="nav-item">
+      <span class="nav-icon">🧪</span> Test History
+    </a>
+    <a href="/donation" class="nav-item">
       <span class="nav-icon">❤️</span> Donate
     </a>
-
     <span class="nav-label">Account</span>
-    <a href="#" class="nav-item">
+    <a href="/settings" class="nav-item">
       <span class="nav-icon">⚙️</span> Settings
     </a>
   </nav>
@@ -57,7 +59,7 @@
       <p>Here's your eye health overview.</p>
     </div>
     <div class="topbar-right">
-      <a href="diagnostics.html" class="topbar-btn primary">+ New Scan</a>
+      <a href="/diagnostics" class="topbar-btn primary">+ New Scan</a>
     </div>
   </header>
 
@@ -106,8 +108,8 @@
         <h2>Ready for your next eye scan?</h2>
         <p>Upload a fundus image for diabetic retinopathy, glaucoma, cataract, or dry eye screening.</p>
         <div class="hero-actions">
-          <a href="diagnostics.html" class="hero-btn white">🔬 Scan My Eyes</a>
-          <a href="donation.html" class="hero-btn outline">Support the Project</a>
+          <a href="/diagnostics" class="hero-btn white">🔬 Scan My Eyes</a>
+          <a href="/donation" class="hero-btn outline">Support the Project</a>
         </div>
       </div>
       <div class="hero-pills">
@@ -124,7 +126,7 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">Latest Risk Level</span>
-          <a href="diagnostics.html" class="card-action">New scan →</a>
+          <a href="/diagnostics" class="card-action">New scan →</a>
         </div>
         <div class="risk-display" id="riskDisplay">
           <div class="empty">
@@ -165,12 +167,10 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<script>
-  // ── Greeting ──
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  document.getElementById('hello').textContent = `${greeting}! 👋`;
+<!-- auth.js MUST come before page script -->
+<script src="/js/auth.js"></script>
 
+<script>
   // ── Toast ──
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -188,12 +188,10 @@
 
       const level = (row.risk_label || 'Low').toLowerCase();
 
-      // Stat cards
       document.getElementById('statRisk').textContent = row.risk_score ?? '—';
       document.getElementById('statRiskSub').textContent = row.risk_label ?? '—';
       document.getElementById('statCondition').textContent = row.disease ?? '—';
 
-      // Risk display
       document.getElementById('riskDisplay').innerHTML = `
         <div class="risk-score ${level}">${row.risk_score}</div>
         <div class="risk-label-text">${row.disease} · ${row.risk_label} Risk</div>
@@ -212,7 +210,6 @@
       const rows = await res.json();
 
       document.getElementById('statTotal').textContent = rows.length;
-
       if (!rows.length) return;
 
       document.getElementById('reports').innerHTML = rows.map((r, i) => {
@@ -239,12 +236,6 @@
       this.textContent = 'Set Reminder Now';
       this.disabled = false;
     }, 5000);
-  });
-
-  // ── Logout ──
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    showToast('Logged out successfully.');
-    setTimeout(() => window.location.href = '/login', 1000);
   });
 
   // ── Init ──

@@ -1,31 +1,55 @@
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+const mysql = require("mysql2");
 
-const dbPath = path.join(__dirname, "optiguard.db");
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error("DB error:", err.message);
-  else console.log("SQLite connected:", dbPath);
+const db = mysql.createPool({
+  uri: "mysql://root:uhrZHmxuMqoCwvCfCfYAQMYWZTDllUkw@roundhouse.proxy.rlwy.net:14486/railway",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS reports (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      disease TEXT NOT NULL,
-      risk_score INTEGER NOT NULL,
-      risk_label TEXT NOT NULL,
-      created_at TEXT DEFAULT (datetime('now'))
-    )
-  `);
+// ── Create tables if they don't exist ──
+const initSQL = `
+  CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fullname VARCHAR(255),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS donations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      amount INTEGER NOT NULL,
-      currency TEXT DEFAULT 'BDT',
-      created_at TEXT DEFAULT (datetime('now'))
-    )
-  `);
-});
+  CREATE TABLE IF NOT EXISTS reports (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    disease VARCHAR(255),
+    risk_score INT,
+    risk_label VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
 
-module.exports = db;
+  CREATE TABLE IF NOT EXISTS donations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    amount DECIMAL(10,2),
+    currency VARCHAR(10) DEFAULT 'BDT',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`;
+
+// Run each statement separately
+const statements = initSQL.split(";").map(s => s.trim()).filter(s => s.length > 0);
+
+(async () => {
+  try {
+    const conn = await db.promise().getConnection();
+    for (const stmt of statements) {
+      await conn.query(stmt);
+    }
+    conn.release();
+    console.log("MySQL connected & tables ready ✓");
+  } catch (err) {
+    console.error("MySQL init error:", err.message);
+    process.exit(1);
+  }
+})();
+
+module.exports = db.promise();

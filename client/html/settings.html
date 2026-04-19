@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptiGuard AI — Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/settings.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="/" class="sidebar-brand">
+    <div class="brand-icon">👁</div>
+    <span class="brand-name">OptiGuard AI</span>
+  </a>
+  <nav class="sidebar-nav">
+    <span class="nav-label">Main</span>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="diagnostics.html" class="nav-item"><span class="nav-icon">🔬</span> Diagnostics</a>
+      <a href="test-history.html" class="nav-item"><span class="nav-icon">🧪</span> Test History</a>
+    <a href="donation.html" class="nav-item"><span class="nav-icon">❤️</span> Donate</a>
+    <span class="nav-label">Account</span>
+    <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar" id="sidebarAvatar">U</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarName">User</div>
+        <div class="user-role">Patient</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Logout">↩</button>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>⚙️ Settings</h1>
+      <p>Manage your account, security and preferences.</p>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="settings-grid">
+
+      <!-- Settings Nav -->
+      <div class="settings-nav">
+        <button class="settings-nav-item active" data-section="profile">
+          <span class="settings-nav-icon">👤</span> Profile
+        </button>
+        <button class="settings-nav-item" data-section="security">
+          <span class="settings-nav-icon">🔒</span> Security
+        </button>
+        <button class="settings-nav-item" data-section="notifications">
+          <span class="settings-nav-icon">🔔</span> Notifications
+        </button>
+        <button class="settings-nav-item" data-section="connected">
+          <span class="settings-nav-icon">🔗</span> Connected
+        </button>
+        <button class="settings-nav-item" data-section="danger">
+          <span class="settings-nav-icon">⚠️</span> Danger Zone
+        </button>
+      </div>
+
+      <!-- Settings Content -->
+      <div>
+
+        <!-- PROFILE SECTION -->
+        <div class="settings-section active" id="section-profile">
+
+          <!-- Profile header -->
+          <div class="profile-header">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="avatarInitials">U</div>
+              <button class="avatar-edit" title="Change photo">✏️</button>
+            </div>
+            <div class="profile-info">
+              <h2 id="profileName">Loading...</h2>
+              <p id="profileEmail">loading@example.com</p>
+              <div class="profile-badge">🩺 Patient Account</div>
+            </div>
+          </div>
+
+          <!-- Account summary -->
+          <div class="settings-card" style="animation-delay:0.05s">
+            <div class="settings-card-header">
+              <div>
+                <div class="settings-card-title">Account Summary</div>
+                <div class="settings-card-subtitle">Your OptiGuard AI activity</div>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="stats-summary">
+                <div class="summary-stat">
+                  <div class="summary-stat-num" id="totalScans">0</div>
+                  <div class="summary-stat-label">Total Scans</div>
+                </div>
+                <div class="summary-stat">
+                  <div class="summary-stat-num" id="totalDonations">0</div>
+                  <div class="summary-stat-label">Donations Made</div>
+                </div>
+                <div class="summary-stat">
+                  <div class="summary-stat-num">Free</div>
+                  <div class="summary-stat-label">Plan</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal info -->
+          <div class="settings-card" style="animation-delay:0.1s">
+            <div class="settings-card-header">
+              <div>
+                <div class="settings-card-title">Personal Information</div>
+                <div class="settings-card-subtitle">Update your name and contact details</div>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="form-row">
+                <div class="field">
+                  <label>Full Name</label>
+                  <input type="text" id="fullName" placeholder="Enter your full name">
+                </div>
+                <div class="field">
+                  <label>Display Name</label>
+                  <input type="text" id="displayName" placeholder="How should we call you?">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label>Email Address</label>
+                  <input type="email" id="emailField" placeholder="your@email.com" readonly>
+                  <span class="field-hint">Email cannot be changed here. Contact support.</span>
+                </div>
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="tel" id="phone" placeholder="+880 1XX XXX XXXX">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label>Date of Birth</label>
+                  <input type="date" id="dob">
+                </div>
+                <div class="field">
+                  <label>Gender</label>
+                  <select id="gender">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer_not">Prefer not to say</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="card-footer-note">Last updated: just now</span>
+              <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SECURITY SECTION -->
+        <div class="settings-section" id="section-security">
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div>
+                <div class="settings-card-title">Change Password</div>
+                <div class="settings-card-subtitle">Use a strong password with at least 8 characters</div>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="form-row single">
+                <div class="field">
+                  <label>Current Password</label>
+                  <div class="password-wrap">
+                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                    <button class="password-toggle" onclick="togglePassword('currentPassword', this)">👁</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label>New Password</label>
+                  <div class="password-wrap">
+                    <input type="password" id="newPassword" placeholder="Enter new password" oninput="checkStrength(this.value)">
+                    <button class="password-toggle" onclick="togglePassword('newPassword', this)">👁</button>
+                  </div>
+                  <div class="strength-bar">
+                    <div class="strength-track"><div class="strength-fill" id="strengthFill"></div></div>
+                    <div class="strength-label" id="strengthLabel">Enter a password</div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Confirm New Password</label>
+                  <div class="password-wrap">
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                    <button class="password-toggle" onclick="togglePassword('confirmPassword', this)">👁</button>
+                  </div>
+                  <span class="field-hint" id="matchHint"></span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="card-footer-note">🔒 Passwords are encrypted with bcrypt</span>
+              <button class="btn-save" onclick="changePassword()">Update Password</button>
+            </div>
+          </div>
+
+          <div class="settings-card" style="animation-delay:0.1s">
+            <div class="settings-card-header">
+              <div>
+                <div class="settings-card-title">Login Activity</div>
+                <div class="settings-card-subtitle">Recent sign-ins to your account</div>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="connected-row">
+                <div class="connected-icon">💻</div>
+                <div class="connected-info">
+                  <div class="connected-name">MacBook Air — Chrome</div>
+                  <div class="connected-status">Current session · Dhaka, Bangladesh</div>
+                </div>
+                <span class="connected-badge on">Active</span>
+              </div>
+              <div class="connected-row">
+                <div class="connected-icon">📱</div>
+                <div class="connected-info">
+                  <div class="connected-name">iPhone — Safari</div>
+                  <div class="connected-status">2 days ago · Dhaka, Bangladesh</div>
+                </div>
+                <button class="btn-ghost-sm">Revoke</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- NOTIFICATIONS SECTION -->
+        <div class="settings-section" id="section-notifications">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div>
+                <div class="settings-card-title">Notification Preferences</div>
+                <div class="settings-card-subtitle">Choose what you want to be notified about</div>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Scan Results</h4>
+                  <p>Get notified when your AI scan is complete</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>20-20-20 Reminders</h4>
+                  <p>Eye strain break reminders every 20 minutes</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Health Tips</h4>
+                  <p>Weekly eye care tips and advice</p>
+                </div>
+                <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Donation Updates</h4>
+                  <p>Updates on how your donations are being used</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Security Alerts</h4>
+                  <p>Alerts for new sign-ins and account changes</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="card-footer-note">Changes save automatically</span>
+              <button class="btn-save" onclick="showToast('Notification preferences saved!', 'success')">Save Preferences</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONNECTED SECTION -->
+        <div class="settings-section" id="section-connected">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div>
+                <div class="settings-card-title">Connected Accounts</div>
+                <div class="settings-card-subtitle">Manage your linked sign-in methods</div>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="connected-row">
+                <div class="connected-icon">
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" alt="Google">
+                </div>
+                <div class="connected-info">
+                  <div class="connected-name">Google</div>
+                  <div class="connected-status" id="googleStatus">Not connected</div>
+                </div>
+                <span class="connected-badge off" id="googleBadge">Disconnected</span>
+              </div>
+              <div class="connected-row">
+                <div class="connected-icon">📧</div>
+                <div class="connected-info">
+                  <div class="connected-name">Email & Password</div>
+                  <div class="connected-status">Primary sign-in method</div>
+                </div>
+                <span class="connected-badge on">Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="settings-section" id="section-danger">
+          <div class="danger-zone">
+            <div class="danger-header">
+              <span>⚠️</span>
+              <h3>Danger Zone</h3>
+            </div>
+            <div class="danger-item">
+              <div>
+                <div class="danger-item-title">Clear Scan History</div>
+                <div class="danger-item-desc">Permanently delete all your scan reports and history. This cannot be undone.</div>
+              </div>
+              <button class="btn-danger" onclick="openModal('clearModal')">Clear History</button>
+            </div>
+            <div class="danger-item">
+              <div>
+                <div class="danger-item-title">Delete Account</div>
+                <div class="danger-item-desc">Permanently delete your account and all associated data. This action is irreversible.</div>
+              </div>
+              <button class="btn-danger" onclick="openModal('deleteModal')">Delete Account</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Clear History Modal -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <h3>Clear Scan History?</h3>
+    <p>This will permanently delete all your scan reports. Your account will remain active but your history will be gone forever.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost-sm" onclick="closeModal('clearModal')">Cancel</button>
+      <button class="btn-danger" onclick="clearHistory()">Yes, Clear History</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete Your Account?</h3>
+    <p>This will permanently delete your OptiGuard AI account, all scan history, and personal data. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost-sm" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-danger" onclick="deleteAccount()">Yes, Delete Account</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Toast ──
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Section navigation ──
+  document.querySelectorAll('.settings-nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('section-' + btn.dataset.section).classList.add('active');
+    });
+  });
+
+  // ── Load user data ──
+  async function loadUserData() {
+    try {
+      const res = await fetch('/api/me');
+      const user = await res.json();
+      const name = user.name || 'User';
+      const email = user.email || '';
+      const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+      document.getElementById('profileName').textContent = name;
+      document.getElementById('profileEmail').textContent = email || 'No email on file';
+      document.getElementById('avatarInitials').textContent = initials;
+      document.getElementById('sidebarAvatar').textContent = initials;
+      document.getElementById('sidebarName').textContent = name;
+      document.getElementById('fullName').value = name;
+      document.getElementById('displayName').value = name.split(' ')[0];
+      if (email) document.getElementById('emailField').value = email;
+    } catch(e) {
+      console.warn('Could not load user data');
+    }
+  }
+
+  // ── Load stats ──
+  async function loadStats() {
+    try {
+      const [scansRes, donRes] = await Promise.all([
+        fetch('/api/scans/recent'),
+        fetch('/api/donations/recent')
+      ]);
+      const scans = await scansRes.json();
+      const donations = await donRes.json();
+      document.getElementById('totalScans').textContent = scans.length;
+      document.getElementById('totalDonations').textContent = donations.length;
+    } catch(e) {}
+  }
+
+  // ── Save profile ──
+  function saveProfile() {
+    const name = document.getElementById('fullName').value.trim();
+    if (!name) return showToast('Please enter your name.', 'error');
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('avatarInitials').textContent = initials;
+    document.getElementById('sidebarAvatar').textContent = initials;
+    document.getElementById('sidebarName').textContent = name;
+    showToast('Profile updated successfully!', 'success');
+  }
+
+  // ── Password toggle ──
+  function togglePassword(id, btn) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  // ── Password strength ──
+  function checkStrength(val) {
+    const fill = document.getElementById('strengthFill');
+    const label = document.getElementById('strengthLabel');
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const levels = [
+      { w: '0%',   color: 'var(--border)',   text: 'Enter a password' },
+      { w: '25%',  color: 'var(--danger)',   text: 'Weak' },
+      { w: '50%',  color: 'var(--warning)',  text: 'Fair' },
+      { w: '75%',  color: 'var(--accent)',   text: 'Good' },
+      { w: '100%', color: 'var(--success)',  text: 'Strong 💪' }
+    ];
+
+    const lvl = val.length === 0 ? levels[0] : levels[Math.max(1, score)];
+    fill.style.width = lvl.w;
+    fill.style.background = lvl.color;
+    label.textContent = lvl.text;
+
+    // Check match
+    const confirm = document.getElementById('confirmPassword').value;
+    const hint = document.getElementById('matchHint');
+    if (confirm) {
+      hint.textContent = val === confirm ? '✓ Passwords match' : '✗ Passwords do not match';
+      hint.style.color = val === confirm ? 'var(--success)' : 'var(--danger)';
+    }
+  }
+
+  // ── Change password ──
+  async function changePassword() {
+    const current = document.getElementById('currentPassword').value;
+    const newPw = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+
+    if (!current || !newPw || !confirm) return showToast('Please fill in all password fields.', 'error');
+    if (newPw !== confirm) return showToast('New passwords do not match.', 'error');
+    if (newPw.length < 8) return showToast('Password must be at least 8 characters.', 'error');
+
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: current, newPassword: newPw })
+      });
+      const result = await res.json();
+      if (result.ok) {
+        showToast('Password updated successfully!', 'success');
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        document.getElementById('strengthFill').style.width = '0%';
+        document.getElementById('strengthLabel').textContent = 'Enter a password';
+      } else {
+        showToast(result.message || 'Failed to update password.', 'error');
+      }
+    } catch(e) {
+      showToast('Could not connect to server.', 'error');
+    }
+  }
+
+  // ── Modals ──
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+  });
+
+  // ── Clear history ──
+  async function clearHistory() {
+    closeModal('clearModal');
+    try {
+      showToast('Scan history cleared.', 'success');
+      document.getElementById('totalScans').textContent = '0';
+    } catch(e) {
+      showToast('Could not clear history.', 'error');
+    }
+  }
+
+  // ── Delete account ──
+  function deleteAccount() {
+    closeModal('deleteModal');
+    showToast('Account deletion requested.', 'error');
+    setTimeout(() => window.location.href = '/login', 2000);
+  }
+
+  // ── Logout ──
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    showToast('Logged out.');
+    setTimeout(() => window.location.href = '/login', 1000);
+  });
+
+  // ── Init ──
+  loadUserData();
+  loadStats();
+</script>
+</body>
+</html>

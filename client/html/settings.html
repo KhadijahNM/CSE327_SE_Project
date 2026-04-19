@@ -78,7 +78,6 @@
           <div class="profile-header">
             <div class="profile-avatar-wrap">
               <div class="profile-avatar" id="avatarInitials">U</div>
-              <button class="avatar-edit" title="Change photo">✏️</button>
             </div>
             <div class="profile-info">
               <h2 id="profileName">Loading...</h2>
@@ -771,9 +770,6 @@
   }
 
   document.querySelector('#section-notifications .btn-save').addEventListener('click', saveNotificationPrefs);
-  document.querySelector('.avatar-edit').addEventListener('click', () => {
-    showToast('Profile photo upload is not available yet.', '');
-  });
 
   document.getElementById('profileUpdatedAt').textContent = formatLastUpdated();
   requireSessionUser();

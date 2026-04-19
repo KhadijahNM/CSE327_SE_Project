@@ -21,7 +21,7 @@
     <span class="nav-label">Main</span>
     <a href="/dashboard" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
     <a href="/diagnostics" class="nav-item"><span class="nav-icon">🔬</span> Diagnostics</a>
-      <a href="/test-history" class="nav-item"><span class="nav-icon">🧪</span> Test History</a>
+    <a href="/test-history" class="nav-item"><span class="nav-icon">🧪</span> Test History</a>
     <a href="/donation" class="nav-item"><span class="nav-icon">❤️</span> Donate</a>
     <span class="nav-label">Account</span>
     <a href="/settings" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
@@ -58,14 +58,8 @@
         <button class="settings-nav-item" data-section="security">
           <span class="settings-nav-icon">🔒</span> Security
         </button>
-        <button class="settings-nav-item" data-section="notifications">
-          <span class="settings-nav-icon">🔔</span> Notifications
-        </button>
         <button class="settings-nav-item" data-section="connected">
           <span class="settings-nav-icon">🔗</span> Connected
-        </button>
-        <button class="settings-nav-item" data-section="danger">
-          <span class="settings-nav-icon">⚠️</span> Danger Zone
         </button>
       </div>
 
@@ -245,59 +239,6 @@
 
         </div>
 
-        <!-- NOTIFICATIONS SECTION -->
-        <div class="settings-section" id="section-notifications">
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <div>
-                <div class="settings-card-title">Notification Preferences</div>
-                <div class="settings-card-subtitle">Choose what you want to be notified about</div>
-              </div>
-            </div>
-            <div class="settings-card-body">
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <h4>Scan Results</h4>
-                  <p>Get notified when your AI scan is complete</p>
-                </div>
-                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-              </div>
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <h4>20-20-20 Reminders</h4>
-                  <p>Eye strain break reminders every 20 minutes</p>
-                </div>
-                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-              </div>
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <h4>Health Tips</h4>
-                  <p>Weekly eye care tips and advice</p>
-                </div>
-                <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
-              </div>
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <h4>Donation Updates</h4>
-                  <p>Updates on how your donations are being used</p>
-                </div>
-                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-              </div>
-              <div class="toggle-row">
-                <div class="toggle-info">
-                  <h4>Security Alerts</h4>
-                  <p>Alerts for new sign-ins and account changes</p>
-                </div>
-                <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-              </div>
-            </div>
-            <div class="card-footer">
-              <span class="card-footer-note">Changes save automatically</span>
-              <button class="btn-save" type="button">Save Preferences</button>
-            </div>
-          </div>
-        </div>
-
         <!-- CONNECTED SECTION -->
         <div class="settings-section" id="section-connected">
           <div class="settings-card">
@@ -330,30 +271,6 @@
           </div>
         </div>
 
-        <!-- DANGER ZONE -->
-        <div class="settings-section" id="section-danger">
-          <div class="danger-zone">
-            <div class="danger-header">
-              <span>⚠️</span>
-              <h3>Danger Zone</h3>
-            </div>
-            <div class="danger-item">
-              <div>
-                <div class="danger-item-title">Clear Scan History</div>
-                <div class="danger-item-desc">Permanently delete all your scan reports and history. This cannot be undone.</div>
-              </div>
-              <button class="btn-danger" onclick="openModal('clearModal')">Clear History</button>
-            </div>
-            <div class="danger-item">
-              <div>
-                <div class="danger-item-title">Delete Account</div>
-                <div class="danger-item-desc">Permanently delete your account and all associated data. This action is irreversible.</div>
-              </div>
-              <button class="btn-danger" onclick="openModal('deleteModal')">Delete Account</button>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -362,33 +279,7 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- Clear History Modal -->
-<div class="modal-overlay" id="clearModal">
-  <div class="modal">
-    <h3>Clear Scan History?</h3>
-    <p>This will permanently delete all your scan reports. Your account will remain active but your history will be gone forever.</p>
-    <div class="modal-actions">
-      <button class="btn-ghost-sm" onclick="closeModal('clearModal')">Cancel</button>
-      <button class="btn-danger" onclick="clearHistory()">Yes, Clear History</button>
-    </div>
-  </div>
-</div>
-
-<!-- Delete Account Modal -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal">
-    <h3>Delete Your Account?</h3>
-    <p>This will permanently delete your OptiGuard AI account, all scan history, and personal data. This cannot be undone.</p>
-    <div class="modal-actions">
-      <button class="btn-ghost-sm" onclick="closeModal('deleteModal')">Cancel</button>
-      <button class="btn-danger" onclick="deleteAccount()">Yes, Delete Account</button>
-    </div>
-  </div>
-</div>
-
 <script>
-  const notificationStorageKey = 'optiNotificationPrefs';
-
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -408,7 +299,6 @@
   function getSessionUser() {
     const raw = sessionStorage.getItem('optiUser');
     if (!raw) return null;
-
     try {
       return JSON.parse(raw);
     } catch (error) {
@@ -443,17 +333,13 @@
 
   function formatLastUpdated(date = new Date()) {
     return 'Last updated: ' + date.toLocaleString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
     });
   }
 
   function syncSessionUser(user) {
     if (!user) return;
-
     const sessionUser = getSessionUser() || {};
     const mergedUser = {
       ...sessionUser,
@@ -461,7 +347,6 @@
       name: user.displayName || user.fullName || user.name || sessionUser.name || 'User',
       email: user.email || sessionUser.email || ''
     };
-
     sessionStorage.setItem('optiUser', JSON.stringify(mergedUser));
   }
 
@@ -562,20 +447,11 @@
       const res = await fetch('/api/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: sessionUser.email,
-          fullName,
-          displayName,
-          phone,
-          dob,
-          gender
-        })
+        body: JSON.stringify({ email: sessionUser.email, fullName, displayName, phone, dob, gender })
       });
 
       const result = await res.json();
-      if (!res.ok || !result.ok) {
-        throw new Error(result.message || 'Could not save profile.');
-      }
+      if (!res.ok || !result.ok) throw new Error(result.message || 'Could not save profile.');
 
       syncSessionUser(result.user);
       applyUserToUI(result.user);
@@ -672,69 +548,6 @@
     }
   }
 
-  function openModal(id) {
-    document.getElementById(id).classList.add('open');
-  }
-
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-  }
-
-  document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => {
-      if (e.target === m) m.classList.remove('open');
-    });
-  });
-
-  async function clearHistory() {
-    const email = getCurrentEmail();
-    closeModal('clearModal');
-    if (!email) return showToast('Please log in again.', 'error');
-
-    try {
-      const res = await fetch('/api/scans', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      const result = await res.json();
-
-      if (!res.ok || !result.ok) {
-        throw new Error(result.message || 'Could not clear history.');
-      }
-
-      document.getElementById('totalScans').textContent = '0';
-      showToast(result.deleted ? 'Scan history cleared.' : 'No linked scan history found to clear.', 'success');
-    } catch (error) {
-      showToast(error.message || 'Could not clear history.', 'error');
-    }
-  }
-
-  async function deleteAccount() {
-    const email = getCurrentEmail();
-    closeModal('deleteModal');
-    if (!email) return showToast('Please log in again.', 'error');
-
-    try {
-      const res = await fetch('/api/auth/account', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      const result = await res.json();
-
-      if (!res.ok || !result.ok) {
-        throw new Error(result.message || 'Could not delete account.');
-      }
-
-      sessionStorage.removeItem('optiUser');
-      showToast('Account deleted successfully.', 'success');
-      setTimeout(() => window.location.href = '/login', 1200);
-    } catch (error) {
-      showToast(error.message || 'Could not delete account.', 'error');
-    }
-  }
-
   document.getElementById('logoutBtn').addEventListener('click', event => {
     event.preventDefault();
     sessionStorage.removeItem('optiUser');
@@ -742,39 +555,8 @@
     setTimeout(() => window.location.href = '/login', 600);
   });
 
-  function loadNotificationPrefs() {
-    const raw = localStorage.getItem(notificationStorageKey);
-    if (!raw) return;
-
-    try {
-      const prefs = JSON.parse(raw);
-      document.querySelectorAll('#section-notifications .toggle-row').forEach(row => {
-        const key = row.querySelector('h4').textContent;
-        if (Object.prototype.hasOwnProperty.call(prefs, key)) {
-          row.querySelector('input[type="checkbox"]').checked = !!prefs[key];
-        }
-      });
-    } catch (error) {
-      console.warn('Could not parse saved notification preferences.', error);
-    }
-  }
-
-  function saveNotificationPrefs() {
-    const prefs = {};
-    document.querySelectorAll('#section-notifications .toggle-row').forEach(row => {
-      const key = row.querySelector('h4').textContent;
-      prefs[key] = row.querySelector('input[type="checkbox"]').checked;
-    });
-
-    localStorage.setItem(notificationStorageKey, JSON.stringify(prefs));
-    showToast('Notification preferences saved!', 'success');
-  }
-
-  document.querySelector('#section-notifications .btn-save').addEventListener('click', saveNotificationPrefs);
-
   document.getElementById('profileUpdatedAt').textContent = formatLastUpdated();
   requireSessionUser();
-  loadNotificationPrefs();
   loadUserData();
   loadStats();
 </script>

@@ -32,7 +32,7 @@ const WORKFLOWS = {
 };
 
 // ── Gemini config ──
-const GEMINI_API_KEY = "AIzaSyCl2R7W8bcRx9cOk8hqMFI2NEg6AmVm2tw";
+const GEMINI_API_KEY = "AIzaSyDm6nRIYe28R2hyLvZI6VEjSXusivJVYQg";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const SYSTEM_PROMPT = `You are OptiGuard AI's eye health assistant. You help patients understand their eye scan results, explain eye conditions, and provide general eye care advice.

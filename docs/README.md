@@ -89,7 +89,7 @@ Replace the demo scan response in `/api/scans/upload` to call the ML service.
 ---
 
 ## Notes
-- API base URL is in: `frontend/assets/js/api.js`
-- If your backend port changes, edit `API_BASE`.
+- The current pages call same-origin `/api/...` routes directly from the HTML pages.
+- If your backend port changes in local development, update the hardcoded login/admin URLs in `client/html/login.html`.
 
 Good luck — you’re building this the right way (run → test → integrate).

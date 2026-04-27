@@ -141,9 +141,20 @@
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+
+      const backendRes = await fetch('/api/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          fullName: user.displayName || user.email || 'User'
+        })
+      });
+      const backendData = await backendRes.json();
+
       saveOptiUser({
-        id: user.uid,
-        name: user.displayName || user.email || 'User',
+        id: backendData.user?.id || user.uid,
+        name: backendData.user?.name || user.displayName || user.email || 'User',
         email: user.email || '',
         provider: 'google'
       });

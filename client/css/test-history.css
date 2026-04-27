@@ -1,272 +1,219 @@
-.dashboard {
-  width: min(100%, 980px);
-  margin: 0 auto;
+/* ── Layout ── */
+.main { margin-left: 220px; padding: 32px; min-height: 100vh; background: #f4f6fb; }
+.topbar { margin-bottom: 24px; }
+.topbar h1 { font-size: 22px; font-weight: 700; margin: 0; }
+.topbar p  { color: #888; margin: 4px 0 0; font-size: 14px; }
+
+/* Two-column split */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  min-height: 80vh;
+  overflow: hidden;
+}
+
+/* Vertical divider */
+.divider {
+  background: #e8eaf0;
+  width: 1px;
+}
+
+/* ── Left Panel ── */
+.left-panel {
   padding: 28px;
-  background: white;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
 }
 
-.history-content {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+.panel-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
 }
 
-/* =========================
-   TITLE BAR
-   ========================= */
-.title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 0 14px;
-  border-bottom: 1px solid var(--border);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
-.title-text {
-  margin: 0;
-  font-family: 'Syne', sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--text);
-}
-
-.icon-btn, .menu-btn {
-  background: none;
-  border: none;
-  color: var(--text);
-  font-size: 20px;
-  cursor: pointer;
-}
-
-/* =========================
-   SUBTITLE BAR
-   ========================= */
-.subtitle-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 15px 0;
-}
-
-.subtitle {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--text);
-}
-
-/* Filter section */
-.filter-section {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #2196F3;
-}
-
-.filter-text {
-  font-size: 14px;
-  font-weight: bold;
-  color: #2196F3;
-}
-
-/* =========================
-   CHART BOX
-   ========================= */
-.chart-box {
-  background: #dbeafe;
-  padding: 20px;
+.stat-box {
+  background: #f0f4ff;
   border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-  .chart-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
-    color: #1e3a8a;
-  }
-
-.chart-subtitle {
-  margin: 5px 0 15px;
-  font-size: 14px;
-  color: #002171;
-}
-
-/* =========================
-   STATISTICS CARDS
-   ========================= */
-.stats {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
+  padding: 14px 12px;
   text-align: center;
 }
 
-/* Individual stat card */
-.stat-box {
+.stat-box .stat-icon { font-size: 20px; margin-bottom: 6px; }
+.stat-box h3 { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: #2b3aff; }
+.stat-box .stat-label { font-size: 12px; color: #888; }
+
+/* Chart */
+.chart-box {
+  background: #f8f9ff;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.chart-box h3 { font-size: 14px; font-weight: 600; margin: 0 0 4px; color: #333; }
+.chart-box p  { font-size: 12px; color: #aaa; margin: 0 0 12px; }
+
+/* Reports section */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header h3 { font-size: 15px; font-weight: 600; margin: 0; color: #1a1a2e; }
+.view-all-btn {
+  font-size: 13px;
+  color: #2b3aff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Report items */
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f8f9ff;
+  border-radius: 10px;
+  border-left: 4px solid #2b3aff;
+  margin-bottom: 10px;
+}
+
+.report-item.risk-high   { border-left-color: #e74c3c; }
+.report-item.risk-medium { border-left-color: #f39c12; }
+.report-item.risk-low    { border-left-color: #27ae60; }
+
+.report-left { display: flex; flex-direction: column; gap: 3px; }
+.report-disease { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+.report-date    { font-size: 12px; color: #aaa; }
+
+.report-right { text-align: right; }
+.risk-score { font-size: 20px; font-weight: 700; color: #2b3aff; }
+.risk-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badge-high   { background: #fde8e8; color: #e74c3c; }
+.badge-medium { background: #fef3e2; color: #f39c12; }
+.badge-low    { background: #e8f8f0; color: #27ae60; }
+
+.no-reports {
+  text-align: center;
+  color: #bbb;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+/* ── Right Panel (Chatbot) ── */
+.right-panel {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-header h3  { font-size: 16px; font-weight: 700; margin: 0 0 4px; color: #1a1a2e; }
+.chat-header p   { font-size: 13px; color: #aaa; margin: 0; }
+
+.chat-log {
   flex: 1;
-  background: #e0f2fe;
-  margin: 0 10px;
-  padding: 15px;
-  border-radius: 8px;
-  color: var(--text);
-
-  /* ✅ Center content horizontally & vertically */
-  display: flex;              
-  flex-direction: column;     
-  align-items: center;        
-  justify-content: center;    
-  text-align: center;         
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 400px;
+  max-height: 500px;
+  padding-right: 4px;
 }
 
-/* Numbers inside cards */
-.stat-box h3 {
-  margin: 0;
-  color: #0D47A1;
+.chat-msg { display: flex; gap: 10px; align-items: flex-start; max-width: 90%; }
+.chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+.chat-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
 }
 
-/* Icon container */
-.stat-icon {
-  margin-bottom: 8px;
+.bot  .chat-avatar { background: #e8edff; color: #2b3aff; }
+.user .chat-avatar { background: #eee; color: #555; }
+
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 1px solid #eee;
 }
 
-/* Center icon */
-.stat-icon svg {
-  display: block;
-  margin: 0 auto;
+.bot  .chat-bubble { background: #f4f6ff; border-radius: 4px 14px 14px 14px; color: #1a1a2e; }
+.user .chat-bubble { background: #2b3aff; color: #fff; border-radius: 14px 4px 14px 14px; border-color: transparent; }
+
+.chat-bubble ul { margin: 6px 0 0 16px; padding: 0; }
+.chat-bubble li { margin-bottom: 4px; }
+
+/* Typing indicator */
+.typing span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #aaa;
+  animation: blink 1.2s infinite;
+  margin: 0 2px;
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+/* Chat input */
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 14px;
 }
 
-/* =========================
-   TREND CARD ADJUSTMENT
-   ========================= */
-.trend-box h3{
-  margin-top:0;   /* ✅ Removed extra spacing so it aligns like Avg Risk & Total Scans */
+.chat-input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
 }
 
-/* =========================
-   REPORT HEADER
-   ========================= */
-.reports-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
+.chat-input-row input:focus { border-color: #2b3aff; }
+
+.chat-input-row button {
+  padding: 10px 18px;
+  background: #2b3aff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.reports-title{
-  font-size:22px;
-  font-weight:bold;
-  color:var(--text);
-}
-
-.view-all{
-  font-size:14px;
-  color:#2196F3;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-/* =========================
-   REPORT CARD
-   ========================= */
-.report-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  background:white;
-  border-radius:10px;
-  border:1px solid var(--border);
-  box-shadow:0 4px 10px rgba(0,0,0,0.04);
-
-  padding:15px;
-  margin-bottom:12px;
-}
-
-/* Left section */
-.report-left{
-  display:flex;
-  flex-direction:column;
-}
-
-.report-date{
-  font-size:15px;
-  font-weight:bold;
-  color:var(--text);
-}
-
-.report-time{
-  font-size:13px;
-  color:#666;
-  margin-bottom:6px;
-}
-
-/* Status line */
-.report-status{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:14px;
-}
-
-/* =========================
-   STATUS DOT COLORS
-   ========================= */
-/* ✅ Changed this portion so colors depend on Low/Medium/High */
-.status-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  display:inline-block;
-}
-
-.status-low {
-  background:#4CAF50;   /* Green for Low */
-}
-
-.status-medium {
-  background:#FFC107;   /* Amber/Yellow for Medium */
-}
-
-.status-high {
-  background:#F44336;   /* Red for High */
-}
-
-/* Right section */
-.report-right{
-  text-align:right;
-}
-
-.risk-value{
-  font-size:20px;
-  font-weight:bold;
-  color:#0D47A1;
-}
-
-@media (max-width: 900px) {
-  .dashboard {
-    padding: 20px;
-  }
-
-  .stats {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .stat-box {
-    margin: 0;
-  }
-}
-
-.risk-label{
-  font-size:13px;
-  color:#666;
-}
+.chat-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }

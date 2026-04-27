@@ -172,6 +172,14 @@
 <script src="/js/auth.js"></script>
 
 <script>
+  function getCurrentEmail() {
+    try {
+      return JSON.parse(sessionStorage.getItem('optiUser') || 'null')?.email || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
   // ── Toast ──
   function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -183,7 +191,9 @@
   // ── Load latest scan ──
   async function loadLatest() {
     try {
-      const res = await fetch('/api/scans/latest');
+      const email = getCurrentEmail();
+      if (!email) return;
+      const res = await fetch(`/api/scans/latest?email=${encodeURIComponent(email)}`);
       const row = await res.json();
       if (!row) return;
 
@@ -207,7 +217,9 @@
   // ── Load recent reports ──
   async function loadReports() {
     try {
-      const res = await fetch('/api/scans/recent');
+      const email = getCurrentEmail();
+      if (!email) return;
+      const res = await fetch(`/api/scans/recent?email=${encodeURIComponent(email)}`);
       const rows = await res.json();
 
       document.getElementById('statTotal').textContent = rows.length;

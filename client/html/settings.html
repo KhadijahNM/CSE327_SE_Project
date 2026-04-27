@@ -447,7 +447,7 @@
       const res = await fetch('/api/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: sessionUser.email, fullName, displayName, phone, dob, gender })
+        body: JSON.stringify({ id: sessionUser.id, email: sessionUser.email, fullName, displayName, phone, dob, gender })
       });
 
       const result = await res.json();
